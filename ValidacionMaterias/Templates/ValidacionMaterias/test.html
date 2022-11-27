@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p style="color:blue;">carrera</p>
+    {% for carrera in carreras %}
+        <p>{{carrera.NombreCarrera}}</p>
+    {% endfor %}
+    <p style="color:blue;">planes</p>
+    {% for plan in planestudio %}
+        <p>{{plan.NombrePlanEstudio}}</p>
+    {% endfor %}
+    <p style="color:blue;">relaciones</p>
+    {% for relacion in Relacion %}
+        <p>>{{relacion.idPlanEstudioCarrera}} : {{relacion.idCarrera}} :-> {{relacion.idPlanEstudio}}</p>
+    {% endfor %}
+    <p style="color:blue;">materias</p>
+    {% for materia in materias %}
+        <p>{{materia.NombreMateria}}</p>
+    {% endfor %}
+    <p style="color:blue;">plan de estudios - > materias</p>
+    {% for rMateria in relacionMaterias %}
+        <p>{{rMateria.idPlanEstudioCarrera}}-> {{rMateria.idMateria}}</p>
+    {% endfor %}
+</body>
+</html>

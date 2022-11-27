@@ -1,0 +1,52 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Agregar_Carrera_Plan.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %} {% block content %}
+
+<div class="Contenido">
+	<h1>Agregar Carrera a Plan de Estudio</h1>
+	{{resp}}
+	<form id="agregar_carrera_plan" action="/Agregar_Carrera_Plan/" method="post">{% csrf_token %}</form>
+
+	<div class="mitad1">
+		<div class="izquierda1">
+			<p>Seleccione la Carrera</p>
+			<select name="select_carrera" id="select_carrera" form="agregar_carrera_plan" required>
+				{% for carrera in carreras %}
+				<option value="{{carrera.idCarrera}}">{{carrera.NombreCarrera}}</option>
+
+				{% endfor %}
+			</select>
+			<p>Seleccione el Plan de Estudio</p>
+			<select name="select_plan" id="select_plan" form="agregar_carrera_plan" required>
+				{% for plan in planes %}
+				<option value="{{plan.idPlanEstudio}}">{{plan.NombrePlanEstudio}}</option>
+
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="mitad2">
+		<input
+			class="boton2"
+			style="background: blue"
+			type="submit"
+			name="submit_CarreraPlan"
+			id="submit_CarreraPlan"
+			form="agregar_carrera_plan"
+			value="Agregar " />
+	</div>
+</div>
+
+{% endblock %}

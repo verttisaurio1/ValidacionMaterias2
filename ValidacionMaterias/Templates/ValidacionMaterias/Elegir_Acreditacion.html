@@ -1,0 +1,30 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Elegir_Acreditacion.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %} {% block content %}
+<!--- Seccion de busqueda por matricula-->
+<div class="Contenido">
+	<h1>Elegir Tipo de Acreditacion</h1>
+	<div class="contenedor">
+		<div class="cont_boton">
+			<div class="cuadrito"></div>
+			<button class="button1" onclick="location.href = '/home'">Cambio de Plan de Estudios</button>
+		</div>
+		<div class="cont_boton">
+			<div class="cuadrito"></div>
+			<button class="button1" onclick="location.href = '/home'">Equivalencia</button>
+		</div>
+	</div>
+</div>
+{% endblock %} {% block afuera %} {% endblock %}

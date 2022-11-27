@@ -1,0 +1,42 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Agregar_Plan.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+  	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %}{% block content  %}
+<div class="Contenido">
+	<h1>Agregar Plan de Estudio</h1>
+	{{resp}}
+	<form id="agregar_plan" action="/Agregar_Plan/" method="post">{% csrf_token %}</form>
+	
+	<div class="mitad1">
+		<div class="izquierda1">
+			<p>Ingrese nombre del plan de estudio</p>
+			<input class="textbox" type="text" name="nombre_plan" id="nombre_plan" form="agregar_plan" placeholder="Nombre del Plan" required/>
+		</div>
+		
+	</div>
+	<div class="mitad2"><input
+		class="boton2"
+		style="background:blue;"
+		type="submit"
+		name="submit_plan"
+		id="submit_plan"
+		form="agregar_plan"
+		value="Agregar " /></div>
+</div>
+
+
+
+
+
+{%  endblock   %}

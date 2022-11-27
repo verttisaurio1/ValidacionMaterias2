@@ -1,0 +1,152 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Subir_Kardex.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %} {% block content %}
+<!--- Seccion de busqueda por matricula-->
+<div class="Contenido">
+	<div class="titulo">
+		<div class="cuadrito"></div>
+		<h1>Subir Kardex</h1>
+		<img class="file_icon" src="{% static 'ValidacionMaterias/img/file.png' %}" alt="" />
+	</div>
+	<div class="divisor">
+		<div class="parte1">
+			<div class="campo">
+				<p>Nombre(s)</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Nombre(s)"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+			
+			<div class="campo">
+				<p>Apellido Paterno</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Apellido Materno"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+
+			<div class="campo">
+				<p>Apellido Materno</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Apellido Materno"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+		</div>
+
+		<div class="parte2">
+			<div class="campo">
+				<p>Carrera</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Carrera"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+		</div>
+
+		<div class="parte2">
+			<div class="campo">
+				<p>Matricula</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Matricula"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+		</div>
+
+		<div class="parte2">
+			<div class="campo">
+				<p>Plan de Estudios</p>
+				<input
+					form="Agregar_Plan"
+					class="textbox"
+					name="display_name"
+					id="display_name"
+					type="text"
+					placeholder="Plan de Estudios"
+					value="{{materia.NombreMateria}}"
+					readonly
+					required />
+			</div>
+		</div>
+	</div>
+	<hr style="margin-bottom: 1rem;">
+	<div class="titulo">
+		<div class="cuadrito"></div>
+		<h1>Materias</h1>
+	</div>
+	<div class="divisor">
+		<table>
+			<tr style="background:lightgray;">
+				<th>Clave</th>
+				<th>Materia</th>
+				<th>Calificacion</th>
+				<th>Periodo</th>
+				<th>Ordinario/Extraordinario</th>
+				<th>Creditos</th>
+			</tr>
+			
+			<tr>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+			</tr>
+			<tr>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+				<td>prueba</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+{% endblock %} {% block afuera %} {% endblock %}

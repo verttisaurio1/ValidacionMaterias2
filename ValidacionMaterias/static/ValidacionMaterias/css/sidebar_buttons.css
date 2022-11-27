@@ -1,0 +1,36 @@
+.Botones{
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+
+    margin:3vmin;
+}
+
+.Side_bar_button{
+    color: Black;
+    height: 4vmin;
+    border-radius: 10px;
+
+    margin-bottom: 2vmin;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background: white; /* default color */
+    transition: background .35s;
+    /*
+    background: linear-gradient(to left, white 50%, gray 50%) right;
+    background-size: 200%;
+    transition: .2s ease-out;
+    */
+}
+
+.Side_bar_button:hover{
+    background: gray;
+}
+/*
+.Side_bar_button:hover{
+    background-position: left;
+}
+*/

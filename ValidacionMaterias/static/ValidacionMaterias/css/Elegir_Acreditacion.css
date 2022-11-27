@@ -1,0 +1,61 @@
+h1{
+    margin-bottom: 5rem;
+}
+
+p{
+    margin-bottom: .2rem;
+}
+
+
+.cuadrito{
+    width: 20px;
+    height: 20px;
+    background: orange;
+    margin-right: 4vmin;
+}
+
+.main{  
+    display: flex;
+
+}
+.Contenido{
+    padding: 5rem;
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.contenedor{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.cont_boton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 8vmin;
+}
+
+.button1{
+    color: white;
+    height: 4vmin;
+    padding-left: 10vmin;
+    padding-right: 10vmin;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background: yellowgreen; /* default color */
+    transition: background .35s;
+    /*
+    background: linear-gradient(to left, white 50%, gray 50%) right;
+    background-size: 200%;
+    transition: .2s ease-out;
+    */
+}
+
+.button1:hover{
+    color: black;
+    background: greenyellow;
+}

@@ -1,0 +1,77 @@
+h1{
+    margin-bottom: 2vmin;
+}
+
+p{
+    margin-bottom: .2rem;
+}
+
+select{
+    margin: .7rem;
+    height: 1.5rem;
+}
+
+input{
+    margin-bottom: 2vmin;
+}
+
+.textbox{
+    height: 1.5rem;
+}
+
+.main{  
+    display: flex;
+
+}
+
+.Contenido{
+    padding: 5rem;
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.mitad1{
+    display: flex;
+    justify-content: space-between;
+}
+
+.derecha1{
+    width: 45vmin;
+}
+
+.cuadro{
+    border: 2px;
+    border-style: solid;
+    border-color: orange;
+    padding: 0.5rem;
+
+}
+
+.mitad2{
+    
+    margin-top: 5vmin;
+    margin-left: 10vmin;
+    display: flex;
+    height:100%
+}
+
+#selects{
+    display: flex;
+    flex-direction: column;
+}
+
+.izquierda2{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.boton2{
+    color: white;
+    padding: .5rem;
+    height: 2rem;
+    border: 0;
+}
+
+   

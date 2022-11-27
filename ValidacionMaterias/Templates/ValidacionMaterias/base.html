@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="es">
+	<head>
+		{% load static %}
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="{% static 'ValidacionMaterias/css/base.css' %}" rel="stylesheet" />
+		{% block head %} {% endblock %}
+	</head>
+	<body>
+		<div class="ventana">
+			<div class="content">
+				<header class="header">
+					<img id="img_logo" src="{% static 'ValidacionMaterias/img/Image_1.png' %}" alt="" />
+					<div class="logo">
+						<img id="img_logo_2" src="{% static 'ValidacionMaterias/img/fiad1.png' %}" alt="" />
+						<h3 id="h3_title">
+							Universidad Autónoma de<br />
+							Baja California
+						</h3>
+						<img id="img_logo_3" src="{% static 'ValidacionMaterias/img/uabc1.png' %}" alt="" />
+					</div>
+				</header>
+				<div class="cuerpo">
+					<aside class="aside">{% block botones %} {% endblock %}</aside>
+					<article class="main">{% block content %} {% endblock %}</article>
+				</div>
+			</div>
+			<div class="footer_box">
+				<div class="content_rect">
+					<svg id="rect1" version="1.1" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+						<rect width="120" height="80" fill="" />
+					</svg>
+					<svg id="rect2" version="1.1" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+						<rect width="120" height="80" fill="#69b253" />
+					</svg>
+
+					<svg id="rect3" version="1.1" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+						<rect width="120" height="80" fill="#ffaa00" />
+					</svg>
+				</div>
+			</div>
+		</div>
+	</body>
+	{% block afuera %} {% endblock %}
+</html>

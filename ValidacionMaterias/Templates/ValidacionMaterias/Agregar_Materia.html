@@ -1,0 +1,40 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Agregar_Materia.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+    <button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %}
+
+
+{% block content  %}
+<div class="Contenido">
+    <h3>Agregar Materias</h3>
+<p> {{ resp }} </p> 
+<form action="/fun_a_materia/" method="GET">
+    <br><br>
+     <p>INGRESE LA CLAVE DE LA MATERIA</p>   <br><br>
+    <input type="number" name="clave" required>
+    <br><br>
+    <p>INGRESE EL NOMBRE DE LA MATERIA</p>   <br><br>
+    <input type="text" name="nombre" required>
+    <br><br>
+    <p>LOS CREDITOS DE LA MATERIA</p>  <br><br>
+    <input type="number" name="creditos" required><br><br>
+    
+    <input type="submit" value="Agregar">
+</form>
+</div>
+
+    
+	
+
+    {%  endblock   %}

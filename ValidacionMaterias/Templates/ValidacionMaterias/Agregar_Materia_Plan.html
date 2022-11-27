@@ -1,0 +1,105 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Agregar_Materia_Plan.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %} {% block content %}
+<!--- Seccion de busqueda por matricula-->
+<form action="/Agregar_Materia_Plan/" method="POST" id="post_search">{% csrf_token %}</form>
+<form action="/Agregar_Materia_Plan/" method="POST" id="Agregar_Plan">{% csrf_token %}</form>
+
+<div class="Contenido">
+	{% if  alerta == 'bien' %}
+		<p style="color:green;">la materia se encontro!!!!</p>
+	{% elif alerta == 'mal' %}
+	<p style="color:red;">algo salio mal!!!!</p>
+	{% endif %}
+	<h1>Agregar Materia a Plan de Estudio</h1>
+	<div class="divisor">
+		<div class="mitad1">
+			<p>Ingrese clave de la materia</p>
+			<div class="aux">
+				<input class="textbox" type="number" placeholder="Clave Materia" name="clave" id="clave" form="post_search" value="{{materia.ClaveMateria}}" required />
+				<input type="submit" name="submit_search" id="submit_search" form="post_search" value="Buscar" />
+			</div>
+
+			<input form="Agregar_Plan" type="hidden" name="display_id" id="display_id" value="{{materia.idMateria}}">
+			<p>Nombre de la materia</p>
+			<input form="Agregar_Plan" class="textbox" name="display_name" id="display_name" type="text" value="{{materia.NombreMateria}}" readonly required />
+
+			<p>Creditos</p>
+			<input form="Agregar_Plan" class="textbox" name="display_creditos" id="display_creditos" type="text" value="{{materia.Creditos}}" readonly required />
+
+			<!---  FIN   Seccion de busqueda por matricula-->
+
+			<!--- Seccion de desplegables y llenado con info la base de datos-->
+			<h3>Tipo de Materia</h3>
+			<div class="selectdiv">
+				<select name="tipo" id="tipo" form="Agregar_Plan" required>
+					<option value=" " selected>Tipo Materia</option>
+					{% for tipo in tipos %}
+					<option value="{{tipo.idTipoMateria}}">{{tipo.NombreMateria}}</option>
+
+					{% endfor %}
+				</select>
+			</div>
+			<br />
+			<h3>Etapa</h3>
+			<div class="selectdiv">
+				<select id="etp" name="etp" form="Agregar_Plan" required>
+					<option value=" " selected>Etapa</option>
+					{% for etapa in etapas %}
+					<option value="{{etapa.idEtapa}}">{{etapa.NombreEtapa}}</option>
+
+					{% endfor %}
+				</select>
+			</div>
+			<!--- FIN  Seccion de desplegables y llenado con info la base de datos-->
+		</div>
+
+		<div class="mitad2">
+			<p>selecciona: carrera - plan de estudio</p>
+			<div class="selectdiv">
+				<select name="planes" id="planes" form="Agregar_Plan" required>
+					<option value=" " selected>Carrera - PlanEstudio</option>
+					{% for planesc in planescarrera %}
+					<option value="{{planesc.idPlanEstudioCarrera}}">{{planesc.idCarrera}} - {{planesc.idPlanEstudio}}</option>
+
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+	</div>
+	<input type="submit" name="submit_plan" id="submit_plan" form="Agregar_Plan" value="Agregar" />
+
+	{% endblock %}
+</div>
+
+{% block afuera %}
+	<script type="text/javascript">
+		$(document).on('submit','#submit_search',function(e){
+			e.preventDefault();
+			
+			$.ajax({
+				type:'POST',
+				url:'',
+				data:{
+					name:$('#clave').val()
+					csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+				},
+				success:function (){
+					
+				}
+			})
+		})
+	</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Agregar_Carrera.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} {% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+</div>
+
+{% endblock %} {% block content %}
+
+<div class="Contenido">
+	<h1>Agregar Carrera</h1>
+	{{resp}}
+	<form id="agregar_carrera" action="/Agregar_Carrera/" method="post">{% csrf_token %}</form>
+
+	<div class="mitad1">
+		<div class="izquierda1">
+			<p>Ingrese la clave de la carrera</p>
+			<input class="textbox" type="text" name="clave_Carrera" id="clave_Carrera" form="agregar_carrera" placeholder="Clave carrera" required />
+			<p>Ingrese el nombre de la carrera</p>
+			<input
+				class="textbox"
+				type="text"
+				name="nombre_Carrera"
+				id="nombre_Carrera"
+				form="agregar_carrera"
+				placeholder="Nombre carrera"
+				required />
+		</div>
+	</div>
+	<div class="mitad2">
+		<input
+			class="boton2"
+			style="background: blue"
+			type="submit"
+			name="submit_Carrera"
+			id="submit_Carrera"
+			form="agregar_carrera"
+			value="Agregar " />
+	</div>
+</div>
+
+{% endblock %}

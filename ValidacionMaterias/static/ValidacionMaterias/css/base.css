@@ -1,0 +1,128 @@
+* {
+  font-family: "5en", sans-serif;
+  font-weight: 100;
+  padding: 0;
+  margin: 0;
+}
+
+.content {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-auto-columns: auto 1fr;
+  height: 100vh;
+}
+
+.header {
+  background: #69b253;
+  flex-basis: 60px;
+  
+}
+
+.cuerpo{
+  display: grid;
+  height:auto;
+  grid-template-columns: 38vmin 1fr;
+}
+
+.main {
+  background: #ffff;
+}
+.aside {
+  background: #ffaa00;
+  flex-basis: 200px;
+}
+
+img {
+  height: 100%;
+  object-fit: scale-down;
+}
+.content_rect {
+  display: flex;
+  flex-direction: column;
+}
+#rect1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#rect2 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#rect3 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media screen and (min-width: 700px) {
+  
+  .ventana{
+    position: relative;
+    bottom: 0;
+    left: 0;
+  }
+
+  .content {
+    bottom: 0;
+    left: 0;
+  }
+  .header {
+    display: flex;
+    height: 20vmin;
+  }
+
+  .logo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  #img_logo {
+    width: auto;
+  }
+  #img_logo_2 {
+    max-height: 100%;
+    max-width: 100%;
+  }
+  #h3_title {
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    font-size: 1.2em;
+    line-height: 1.5;
+    color: black;
+    font-weight: 600;
+    text-align: center;
+  }
+  #img_logo_3 {
+    max-height: 100%;
+    max-width: 100%;
+  }
+  .footer_box {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+  }
+  .content_rect {
+    display: grid;
+    grid-column: 3/ 3;
+    grid-template-columns: repeat(6, 50px);
+    grid-template-rows: repeat(2, 48px);
+  }
+  #rect1 {
+    grid-column: 5 /6;
+    grid-row: 2 / 2;
+    width: 95px;
+  }
+  #rect2 {
+    grid-column: 3 /6;
+    grid-row: 2 / 2;
+    width: 98px;
+    border-left: 2px solid gray;
+  }
+  #rect3 {
+    width: 93px;
+    grid-column: 5 /6;
+    border-top: 2px solid gray;
+    border-left: 2px solid gray;
+  }
+}
