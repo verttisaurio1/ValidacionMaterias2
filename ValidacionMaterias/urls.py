@@ -1,6 +1,8 @@
 from django.urls import path
 from ValidacionMaterias import views
 
+# Esto sirve para direccionar con el name que se le da al path
+app_name = 'aplication'
 
 urlpatterns = [
     
@@ -20,6 +22,11 @@ urlpatterns = [
     path('test/',views.test,name="test"),
     path('fun_search/',views.fun_search_materia),
     path('fun_a_materia/',views.fun_a_materia),
+    
+    path('Equivalencia/',views.Equivalencia,name="Equivalencia"),
+    path('Equivalencia/actualizar_Tabla_<int:idplanDE>_<int:idplanA>/',views.actualizar_Tabla,name="actualizar_Tabla"),
+    path('update_Equivalencia_<int:id>_<int:idplanDE>_<int:idplanA>_<int:ban>/',views.update_Equivalencia,name='update_Equivalencia'),
+    path('update_Equivalencia_elaborar_<int:id>_<int:idmat>_<int:idplanDE>_<int:idplanA>/',views.update_Equivalencia_elaborar,name='update_Equivalencia_elaborar'),
     
 
 ]

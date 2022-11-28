@@ -1,0 +1,39 @@
+
+
+.editar{
+   
+    background-color: orange;
+    border-radius: 6px;
+    padding: 3px 5px; 
+    /* margin: 15px 13px; */
+ 
+    color: #fff;
+    text-decoration:none
+ }
+ 
+ #regresar{
+       background-color: rgb(69, 219, 69);
+       border-radius: 6px;
+       padding: 3px 5px; 
+       /* margin: 15px 13px; */
+ 
+       color: #fff;
+       text-decoration:none;
+ 
+       width: 200px;
+       margin: 30px;
+     display: flex;
+     justify-content: center;
+     }
+
+ .centrar{
+ 
+ margin: 30px;
+ display: flex;
+ justify-content: center;
+ 
+ }
+ 
+ .item{
+   margin: 4px;
+ }

@@ -1,0 +1,66 @@
+{% extends "ValidacionMaterias/base.html" %} {% load static %} {% block head %}
+<link href="{% static 'ValidacionMaterias/css/Equivalencia.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %} 
+
+{% block botones %}
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+    <button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+    <button class="Side_bar_button" onclick="location.href = '/Equivalencia'">Equivalencia</button>
+    
+</div>
+{% endblock %} 
+
+
+{% block content %}
+
+<form action="/Equivalencia/" id="post_equivalencia" method="POST">{% csrf_token %}</form>
+
+<div class="centrar" id="titulo"><h1>EQUIVALENCIA</h1></div>
+<div class="texto centrar"><p>Ingrese el plan de estuido - carrera  'DE' a plan de Estudio - carrera 'A'</p></div>
+<div id="cdes">
+    
+    <div class="desplegable">
+
+
+        <!--Desplegable del plan estudio carrera donde proviene-->
+        <select name="planCarreraDe" form="post_equivalencia" required>
+            
+                {%for cp in cpl%}
+            <option value="{{cp.idPlanEstudioCarrera}}">
+                {{cp.idCarrera}} - {{cp.idPlanEstudio}}
+                </option>
+            {%endfor%}
+        </select>
+    </div>
+    <div class="desplegable"><p>A</p></div>
+    <div class="desplegable">
+
+            <!--Desplegable del plan estudio carrera a donde se dirige -->
+        <select name="planCarreraA" form="post_equivalencia" required>
+            
+            {%for cp in cpl%}
+            <option value="{{cp.idPlanEstudioCarrera}}">
+                {{cp.idCarrera}} - {{cp.idPlanEstudio}}
+                </option>
+            {%endfor%}
+        </select>
+    </div>
+</div>
+<div>
+</div>
+<div class="centrar">
+    <!--Boton que filtrara los datos de las equivalencias-->
+    <input class="Side_bar_button" type="submit" style="background-color: rgb(56, 209, 56); color: white;" value="EQUIVALENCIA" form="post_equivalencia">
+</div>
+{%if cpA%}
+<div>
+    <p class="centrar" style="color: red;">ERROR: NO SE PUEDE ELABORAR LA EQUIVALENCIA DE  |({{cpDE.idCarrera}} - {{cpDE.idPlanEstudio}})| A |({{cpA.idCarrera}} - {{cpA.idPlanEstudio}})|</p>
+</div>
+{%endif%}
+{% endblock %}
