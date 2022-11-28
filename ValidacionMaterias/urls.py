@@ -1,6 +1,7 @@
 from django.urls import path
 from ValidacionMaterias import views
 
+
 urlpatterns = [
     
     path('home/',views.home ,name="home"),
