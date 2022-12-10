@@ -14,11 +14,18 @@
 
 {% endblock %} {% block content %}
 <!--- Seccion de busqueda por matricula-->
+<form action="/Subir_Kardex/" method="POST" id="Buscar" enctype="multipart/form-data">{% csrf_token %}</form>
+<form action="/Subir_Kardex/" method="POST" id="Subir">{% csrf_token %}</form>
 <div class="Contenido">
 	<div class="titulo">
 		<div class="cuadrito"></div>
 		<h1>Subir Kardex</h1>
-		<img class="file_icon" src="{% static 'ValidacionMaterias/img/file.png' %}" alt="" />
+		<div class="image-upload">
+			<label for="file-input">
+				<img class="file_icon" src="{% static 'ValidacionMaterias/img/file.png' %}" alt="" />
+			</label>
+			<input id="file-input" type="file" name="document" form="Buscar" onchange="this.form.submit();" />
+		</div>
 	</div>
 	<div class="divisor">
 		<div class="parte1">
@@ -32,10 +39,9 @@
 					type="text"
 					placeholder="Nombre(s)"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
-			
+
 			<div class="campo">
 				<p>Apellido Paterno</p>
 				<input
@@ -46,7 +52,6 @@
 					type="text"
 					placeholder="Apellido Materno"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
 
@@ -60,7 +65,6 @@
 					type="text"
 					placeholder="Apellido Materno"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
 		</div>
@@ -76,7 +80,6 @@
 					type="text"
 					placeholder="Carrera"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
 		</div>
@@ -92,7 +95,6 @@
 					type="text"
 					placeholder="Matricula"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
 		</div>
@@ -108,19 +110,18 @@
 					type="text"
 					placeholder="Plan de Estudios"
 					value="{{materia.NombreMateria}}"
-					readonly
 					required />
 			</div>
 		</div>
 	</div>
-	<hr style="margin-bottom: 1rem;">
+	<hr style="margin-bottom: 1rem" />
 	<div class="titulo">
 		<div class="cuadrito"></div>
 		<h1>Materias</h1>
 	</div>
 	<div class="divisor">
 		<table>
-			<tr style="background:lightgray;">
+			<tr style="background: lightgray">
 				<th>Clave</th>
 				<th>Materia</th>
 				<th>Calificacion</th>
@@ -128,7 +129,7 @@
 				<th>Ordinario/Extraordinario</th>
 				<th>Creditos</th>
 			</tr>
-			
+
 			<tr>
 				<td>prueba</td>
 				<td>prueba</td>
@@ -145,8 +146,10 @@
 				<td>prueba</td>
 				<td>prueba</td>
 			</tr>
-			
 		</table>
+	</div>
+	<div class="div-botoncito">
+		<input type="submit" form="Subir" name="boton_subir" class="botoncito" value="Continuar">
 	</div>
 </div>
 {% endblock %} {% block afuera %} {% endblock %}
