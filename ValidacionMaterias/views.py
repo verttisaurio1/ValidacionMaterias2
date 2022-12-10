@@ -2,8 +2,9 @@ from django.template import Context ,Template
 from pickle import GET
 from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria
-import pandas
-
+import pandas as pd
+import xlrd
+ 
 # Create your views here.
 context = Context({"resp": " "})
 def home(request):
@@ -115,11 +116,25 @@ def Registro_materias(request):
 
 def Editar_materia(request):
     return render(request,"ValidacionMaterias/Editar_Materia.html")
+
+
     
 
 def Subir_Kardex(request):
     context = {}
-    return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+    if request.method == 'GET':
+        return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+    elif request.method == 'POST':
+        if 'boton_subir' in request.POST:
+            return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+        elif 'document' in request.FILES:
+            archivo = request.FILES['document']
+            print("tengo un archivo")
+            print(archivo)
+            contenido = archivo.read()
+            pf = pd.read_csv(contenido)            
+            return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+
 
 def Elegir_Acreditacion(request):
     return render(request,"ValidacionMaterias/Elegir_Acreditacion.html")
@@ -160,3 +175,63 @@ def test(request):
 
     
     return render(request,"ValidacionMaterias/test.html",context)
+
+def handle_file(file, name):
+    with open('blog/static/Kardex/' + name,'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+def leer_kardex(archivo):
+    kardex = {}
+    wb = archivo
+    documento = xlrd.open_workbook(wb, encoding_override='ISO-8859-1')
+    sh = documento.sheet_by_index(0)
+
+    #obtener nombre
+    nombre_completo = pd.read_excel(documento, skiprows=9 - 1, usecols='I', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    
+
+    #separar nombre 
+    lista = nombre_completo.split(" ")
+    ap_mat = lista.pop()
+    ap_pat = lista.pop()
+    nombre = ""
+    nombre = " ".join(lista)
+
+    #obtener carrera
+    carrera = pd.read_excel(documento, skiprows=7 - 1, usecols='I', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(carrera)
+
+    #obtener matricula
+    matricula = pd.read_excel(documento, skiprows=9 - 1, usecols='G', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(matricula)
+
+
+    #obtener plan de estudios
+    plan_de_estudios = pd.read_excel(documento, skiprows=9 - 1, usecols='AR', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(plan_de_estudios)
+
+    contador_ciclo = 0
+    contador_renglon = 0
+    contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                    'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
+
+    while contador_ciclo < sh.nrows:
+        renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
+        if(renglon != "nan"):
+            lista = []
+            for columna in contador_columna:
+                contenido = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols=columna, nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
+                if(contenido != "nan"):
+                    lista.append(contenido)
+            print(lista)
+        contador_ciclo = contador_ciclo + 1
+    
+    #aqui en teoria hay que meter los datos al diccionario kardex
+    #seria algo como  kardex["cosa"] = cosa
+    kardex['nombre'] = nombre
+    kardex['ap_pat'] = ap_pat
+    kardex['ap_mat'] = ap_mat
+    
+    #finalmente regresamos el diccionario con un return kardex
