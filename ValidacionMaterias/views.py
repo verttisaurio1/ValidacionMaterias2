@@ -10,8 +10,6 @@ context = Context({"resp": " "})
 def home(request):
     return render(request,"ValidacionMaterias/home.html")
 
-
-
 def Agregar_plan(request):
     context = {}
     if request.method == 'GET':
@@ -177,7 +175,7 @@ def test(request):
     return render(request,"ValidacionMaterias/test.html",context)
 
 def handle_file(file, name):
-    with open('blog/static/Kardex/' + name,'wb+') as destination:
+    with open('ValidacionMaterias/static/ValidacionMaterias/Kardex/' + name,'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
 
@@ -223,8 +221,15 @@ def leer_kardex(archivo):
                 contenido = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols=columna, nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
                 if(contenido != "nan"):
                     lista.append(contenido)
-            materias[contador_renglon] = lista
-            contador_renglon = contador_renglon + 1
+            
+            if(lista[4].isnumeric):
+                if(int(lista[4])>60):
+                    materias[contador_renglon] = lista
+                    contador_renglon = contador_renglon + 1
+            else:
+                if(lista[4] not in ("NP","SD")):
+                    materias[contador_renglon] = lista
+                    contador_renglon = contador_renglon + 1
         contador_ciclo = contador_ciclo + 1
     
     #aqui en teoria hay que meter los datos al diccionario kardex
