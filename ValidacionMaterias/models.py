@@ -54,7 +54,11 @@ class RegistroEquivalenciaComparativa(models.Model):
     idRegistroEquivalenciaComparativa = models.AutoField(primary_key=True)
     idMateriaDe = models.IntegerField(blank=False)
     idMateriaA = models.IntegerField(blank=False)
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
 class DetalleAcreditacion(models.Model):
     idDetalleAcreditacion = models.AutoField(primary_key=True)
     idPlanEstudioCarreraMateriaDE= models.ForeignKey(PlanEstudioCarreraMateria,blank=False,on_delete=models.CASCADE)
