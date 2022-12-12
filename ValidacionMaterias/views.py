@@ -128,9 +128,10 @@ def Subir_Kardex(request):
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
             print("tengo un archivo")
-            print(archivo)
-            contenido = archivo.read()
-            pf = pd.read_csv(contenido)            
+            name = archivo.name
+            handle_file(archivo,name)
+            
+
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
