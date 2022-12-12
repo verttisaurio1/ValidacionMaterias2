@@ -1,7 +1,7 @@
 from django.template import Context ,Template
 from pickle import GET
 from django.shortcuts import render , HttpResponse ,redirect
-from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria
+from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
  
@@ -244,3 +244,145 @@ def leer_kardex(archivo):
     kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
     return kardex
+
+
+# guarda el las materias asosiados a plan estudio carrera del registro de equivalencia para moder mostrar a las tablas y tener accesoa los datos
+class Registro_Materias:
+    def __init__(self,id,mde,ma):
+        self.id=id
+        self.mde=mde
+        self.ma=ma
+
+# Asigna un sin equivalencia a las materias del plan estudio carrera seleccionada a donde se dirige
+def Equivalencia(request):
+    carrera_planListadas = PlanEstudioCarrera.objects.all()
+    
+    if request.method =="POST":
+         
+        
+        #Datos del desplegable plan estudio carrera "DE"
+        carrera_planDE = request.POST['planCarreraDe']
+        
+        #Datos del desplegable plan estudio carrera "A"
+        carrera_planA = request.POST['planCarreraA']
+
+        # verifica si los datos no son los mismos
+        if  int(carrera_planDE) == int(carrera_planA):
+             return render(request,"ValidacionMaterias/Equivalencia.html",{"cpl":carrera_planListadas,"cpDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=carrera_planDE),"cpA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=carrera_planA)})
+        
+        #Todos los registros de las tablas comparativas
+        registros = RegistroEquivalenciaComparativa.objects.all()
+
+        # lista donde se guardaran todos id que ya estan asociados 
+        datos_Equivalencia = []
+
+        #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+        for r in registros:
+            materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+            materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            
+           #filtra los datos de los planes estudio carrera seleccionados a los registros
+            if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(carrera_planDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(carrera_planA):
+                # Se guardaran todos los ids que coinsidan
+                datos_Equivalencia.append(int(materiaDe.idPlanEstudioCarreraMateria))
+
+        # filtra las materias de plan estudio carrera DE
+        materiasDe = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=carrera_planDE)
+        # filtra las materias de plan estudio carrera A
+        materiasA = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=carrera_planA)
+        
+        ##### Dame el id que contega la clave 0 osea sin equivalencia de el plan estudio carrera DE
+        clave = 1
+        for m in materiasA:
+            if int(m.idMateria.ClaveMateria) == 0:
+                clave = m.idPlanEstudioCarreraMateria
+        if clave == 1:
+            return render(request,"ValidacionMaterias/Equivalencia.html",{"cpl":carrera_planListadas,"cpDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=carrera_planDE),"cpA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=carrera_planA)})
+
+        # si los datos de los planes estudio carrera seleccionados a los registros es igual a cero asigna a todos los datos un sin equivalencia
+        if len(datos_Equivalencia) == 0:
+            for m in materiasDe:
+                    if int(m.idMateria.ClaveMateria) != 0:
+                       
+                        reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
+                        reg.save()
+        else:
+            # de lo contrario verifica a cuales les puedes asignar un sin equivalencia para no afectar el registro anterior
+            for m in materiasDe:
+                if int(m.idPlanEstudioCarreraMateria) not in datos_Equivalencia:
+                    if int(m.idMateria.ClaveMateria) != 0:
+                        reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
+                        reg.save()
+ 
+        return redirect('aplication:actualizar_Tabla',idplanDE = carrera_planDE,idplanA = carrera_planA)
+                  
+    return render(request,"ValidacionMaterias/Equivalencia.html",{"cpl":carrera_planListadas})
+
+
+
+def actualizar_Tabla(request,idplanDE,idplanA):
+
+    materiasDE = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=idplanDE)
+    for m in materiasDE:
+        if int(m.idMateria.ClaveMateria) == 0:
+            clave = m.idPlanEstudioCarreraMateria
+
+    #Todos los registros de las tablas comparativas
+    registros = RegistroEquivalenciaComparativa.objects.all()
+
+    #listas donde se guardaran las materias de donde proviene, a donde va y su respectivo identificador de equivalencia
+
+    datos_Equivalencia = []
+
+    #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+    for r in registros:
+        materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+        materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            
+        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idplanDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idplanA) :
+            
+            # Se guardara el objeto para tener acceso al: identificador del registro, su materiaDE y su materiaA
+            datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
+
+ 
+    return render(request,"ValidacionMaterias/Actualizar_tablas.html",{"Registro_Equivalencias": datos_Equivalencia,"idplanDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanDE),"idplanA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanA)})
+
+def update_Equivalencia(request,id,idplanDE,idplanA,ban):
+
+    materias = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=idplanA)
+    # bandera donde identifica que la materia seleccionada no esta repetida
+    if ban == 0:
+        return render(request,"ValidacionMaterias/Editar_equivalencia.html",{"id_registro":id,"idplanDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanDE),"idplanA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanA),"materias":materias})
+    
+    # bandera donde identifica que la materia seleccionada esta repetida
+    if ban == 1:
+        return render(request,"ValidacionMaterias/Editar_equivalencia.html",{"id_registro":id,"idplanDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanDE),"idplanA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanA),"materias":materias,"mensaje":"Esta materia ya se encuentra en la equivalencia se leccione otra porfavor"})
+
+def update_Equivalencia_elaborar(request,id,idmat,idplanDE,idplanA):
+
+    registros = RegistroEquivalenciaComparativa.objects.all()
+
+    materiasA = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=idplanA)
+    for m in materiasA:
+        if int(m.idMateria.ClaveMateria) == 0:
+            clave = m.idPlanEstudioCarreraMateria
+
+    for r in registros:
+        materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+        materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            
+        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idplanDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idplanA):
+            if int(r.idRegistroEquivalenciaComparativa) != int(id): #no tomes encuenta el registro seleccionado
+                if int(clave) != int(materiaA.idPlanEstudioCarreraMateria): # no tomes en cuenta los sin equivalencia ya que estos si se pueden repetir
+                    if int(materiaA.idPlanEstudioCarreraMateria) == int(idmat): # si una de las materias de los registros guardados es igual a la que quieres adjuntar, mandara un mensaje de error
+                        return redirect('aplication:update_Equivalencia',id=id,idplanDE=idplanDE,idplanA=idplanA,ban=1) 
+
+    # en el caso que no se hiciera el redirect anterior,"Elabora la edicion de la equivalencia"  
+    id_registro = id
+    registro= RegistroEquivalenciaComparativa.objects.get(idRegistroEquivalenciaComparativa=id_registro)
+    registro.idMateriaA=int(idmat)
+    registro.save()
+   
+    # redireccioname a las tablas de equivalencia
+    return redirect('aplication:actualizar_Tabla',idplanDE=idplanDE,idplanA= idplanA)
+

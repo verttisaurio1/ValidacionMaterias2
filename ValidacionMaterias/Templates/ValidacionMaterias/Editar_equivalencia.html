@@ -1,0 +1,94 @@
+
+{% extends  "ValidacionMaterias/base.html"  %}{%  load static  %}
+{% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.3.1/css/fixedHeader.dataTables.min.css">
+  <link href="{% static 'ValidacionMaterias/css/Equivalencia.css' %}" rel="stylesheet" />
+  <link href="{% static 'ValidacionMaterias/css/Editar_Equivalencia.css' %}" rel="stylesheet" />
+  
+{% endblock %}
+
+{% block botones %}
+
+{% endblock %}
+
+{% block content  %}
+<div class="centrar">
+  <div class="centrar" id="titulo"><h1>EDITAR EQUIVALENCIA</h1></div>
+  <p>{{Nombre}}</p>
+</div>
+<div class="centrar">
+  <p style="color: red;">{{mensaje}}</p>
+</div>
+<div class="ctabla centrar">
+    <table class="display" style="width: 680px" id="example">
+
+        <thead class="thead-dark">
+          <tr>
+            <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="7" align="center">MATERIAS: ({{idplanA.idCarrera}} - {{idplanA.idPlanEstudio}})</td>
+          </tr>
+          <tr>
+            
+            <th scope="col">Clave</th>
+            <th  scope="col">Nombre Materia</th>
+            <th  scope="col">Etapa</th>
+            <th  scope="col">Tipo</th>
+            <th  scope="col">Seleccionar</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {%for m in materias%}
+          <tr>
+           
+            
+            <td >{{m.idMateria.ClaveMateria}}</td>
+            <td >{{m.idMateria.NombreMateria}}</td>
+            <td >{{m.idEtapa.NombreEtapa}}</td>
+            <td >{{m.idTipoMateria.NombreMateria}}</td>
+            <td>
+              <a  id="editar" href="{% url 'aplication:update_Equivalencia_elaborar' id_registro m.idPlanEstudioCarreraMateria idplanDE.idPlanEstudioCarrera idplanA.idPlanEstudioCarrera%}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+              </a>
+          </td>
+
+          </tr>
+          {%endfor%}
+        </tbody>
+    </table>
+  </div>
+  <div>
+    <a  id="regresar" href="{% url 'aplication:actualizar_Tabla' idplanDE.idPlanEstudioCarrera idplanA.idPlanEstudioCarrera%}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg> Regresar 
+    </a>
+  </div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.3.1/js/dataTables.fixedHeader.min.js"></script>
+ 
+    <script>
+
+
+      $(document).ready(function(){
+        var table = $('#example').DataTable({
+          orderCellsTop:true,
+          fixedHeader:true
+        });
+      });
+
+
+    </script>
+
+
+
+{%  endblock   %}
