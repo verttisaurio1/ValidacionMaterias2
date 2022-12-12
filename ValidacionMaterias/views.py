@@ -139,17 +139,47 @@ def Editar_materia(request):
 def Subir_Kardex(request):
     context = {}
     if request.method == 'GET':
+        context['bandera'] = False
         return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
     elif request.method == 'POST':
         if 'boton_subir' in request.POST:
+            #añadimos datos subidos al contexto y mandamos a la siguiente vista
+            context['nombre'] = request.POST['nombre']
+            context['ap_pat'] = request.POST['ap_pat']
+            context['ap_mat'] = request.POST['ap_mat']
+            context['carrera'] = request.POST['carrera']
+            context['matricula'] = request.POST['matricula']
+            context['plan_de_estudios'] = request.POST['plan_de_estudios']
+            context['archivo'] = request.POST['archivo']
+            print(context)
+            #reemplazar este return por el de la siguiente vista
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+            #return render(request,"ValidacionMaterias/Alumno_Equivalencia.html",context)
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
             print("tengo un archivo")
             name = archivo.name
             handle_file(archivo,name)
+            kardex = leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/' +name)
+            context['nombre']= kardex['nombre']
+            context['ap_pat']= kardex['ap_pat']
+            context['ap_mat']= kardex['ap_mat']
+            context['carrera']= kardex['carrera']
+            context['matricula']= kardex['matricula']
+            context['plan_de_estudios']= kardex['plan']
+            context['archivo'] = name
+            context['bandera'] = True
+                
+            items = []
+            for llave in kardex['materias']:
+                contenido = kardex['materias'][llave]
+                if(len(contenido)>7):
+                    an_item = dict(clave=contenido[0],materia=contenido[1],creditos=contenido[2],tipo=contenido[3],calif=contenido[4],fecha=contenido[5],periodo=contenido[7])
+                else:    
+                    an_item = dict(clave=contenido[0],materia=contenido[1],creditos=contenido[2],tipo=contenido[3],calif=contenido[4],fecha=contenido[5],periodo=contenido[6])
+                items.append(an_item)   
             
-
+            context['materias'] = items
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
