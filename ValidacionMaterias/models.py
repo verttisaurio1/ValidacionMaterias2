@@ -52,9 +52,15 @@ class PlanEstudioCarreraMateria(models.Model):
 
 class RegistroEquivalenciaComparativa(models.Model):
     idRegistroEquivalenciaComparativa = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     idMateriaDe = models.IntegerField(blank=False)
     idMateriaA = models.IntegerField(blank=False)
     
+=======
+    idMateriaDe= models.IntegerField(blank=False)
+    idMateriaA= models.IntegerField(blank=False)
+
+>>>>>>> cded0c7cae78a2d461b11d015155d7630312a110
 class DetalleAcreditacion(models.Model):
     idDetalleAcreditacion = models.AutoField(primary_key=True)
     idPlanEstudioCarreraMateriaDE= models.ForeignKey(PlanEstudioCarreraMateria,blank=False,on_delete=models.CASCADE)
