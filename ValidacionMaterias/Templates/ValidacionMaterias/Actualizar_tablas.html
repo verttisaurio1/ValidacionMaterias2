@@ -1,0 +1,102 @@
+
+{% extends  "ValidacionMaterias/base.html"  %}{%  load static  %}
+{% block head %}
+<link href="{% static 'ValidacionMaterias/css/Equivalencia.css' %}" rel="stylesheet" />
+<link href="{% static 'ValidacionMaterias/css/Actualizar_tablas.css' %}" rel="stylesheet" />
+
+</style>
+
+{% endblock %}
+
+{% block botones %}
+
+{% endblock %}
+
+{% block content  %}
+<div class="centrar" id="titulo"><h1>TABLAS DE EQUIVALENCIA</h1></div>
+<div >
+  <a  id="regresar" href="{% url 'aplication:Equivalencia'%}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg> Regresar 
+  </a>
+</div>
+<div class="centrar">
+    <div class="item">
+        <table class="table" id="tabla1"style="width:680px; height: 338px; border-collapse: collapse;">
+
+            <thead class="thead-dark">
+              <tr>
+                <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center">{{idplanDE.idCarrera}} - {{idplanDE.idPlanEstudio}}</td>
+              </tr>
+              <tr>
+                <th style="width:100px;"scope="col">#Registro</th>
+                
+                <th scope="col">Clave</th>
+                <th scope="col">Nombre Materia</th>
+                <th scope="col">Etapa</th>
+                <th scope="col">Tipo</th>
+              </tr>
+            </thead>
+            <tbody >
+              {%for r in Registro_Equivalencias%}
+              <tr>
+                <td >{{r.id}}</td>
+                
+                <td >{{r.mde.idMateria.ClaveMateria}}</td>
+                <td >{{r.mde.idMateria.NombreMateria}}</td>
+                <td >{{r.mde.idEtapa.NombreEtapa}}</td>
+                <td >{{r.mde.idTipoMateria.NombreMateria}}</td>
+              </tr>
+              {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="item">
+        <table id="tabla"  style="width:700px; height: 338px; border-collapse: collapse;">
+
+            <thead class="thead-dark">
+              <tr>
+                <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="7" align="center">{{idplanA.idCarrera}} - {{idplanA.idPlanEstudio}}</td>
+              </tr>
+              <tr>
+                <th scope="col">#Registro</th>
+                
+                <th scope="col">Clave</th>
+                <th scope="col">Nombre Materia</th>
+                <th scope="col">Etapa</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Editar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%for r in Registro_Equivalencias%}
+              <tr>
+                <td >{{r.id}}</td>
+                
+                <td >{{r.ma.idMateria.ClaveMateria}}</td>
+                <td >{{r.ma.idMateria.NombreMateria}}</td>
+                <td >{{r.ma.idEtapa.NombreEtapa}}</td>
+                <td >{{r.ma.idTipoMateria.NombreMateria}}</td>
+                <td>
+                  
+                  <a  class="editar" href="{% url 'aplication:update_Equivalencia' r.id  idplanDE.idPlanEstudioCarrera idplanA.idPlanEstudioCarrera 0 %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                  </svg>
+                </a>
+                  
+                </td>
+              </tr>
+              {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+  
+    {%  endblock   %}

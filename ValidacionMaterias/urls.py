@@ -1,6 +1,8 @@
 from django.urls import path
 from ValidacionMaterias import views
 
+app_name = 'aplication'
+
 urlpatterns = [
     
     path('home/',views.home ,name="home"),
@@ -20,5 +22,10 @@ urlpatterns = [
     path('fun_search/',views.fun_search_materia),
     path('fun_a_materia/',views.fun_a_materia),
     
-
+    #Equivalencia
+    path('Equivalencia/',views.Equivalencia,name="Equivalencia"),
+    path('Equivalencia/actualizar_Tabla_<int:idplanDE>_<int:idplanA>/',views.actualizar_Tabla,name="actualizar_Tabla"),
+    path('update_Equivalencia_<int:id>_<int:idplanDE>_<int:idplanA>_<int:ban>/',views.update_Equivalencia,name='update_Equivalencia'),
+    path('update_Equivalencia_elaborar_<int:id>_<int:idmat>_<int:idplanDE>_<int:idplanA>/',views.update_Equivalencia_elaborar,name='update_Equivalencia_elaborar'),
+    
 ]
