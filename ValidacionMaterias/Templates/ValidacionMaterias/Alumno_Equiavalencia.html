@@ -1,24 +1,163 @@
 
 {% extends  "ValidacionMaterias/base.html"  %}
 
+{% block head %}
 
+<style>
+    .item{
+    
+    height: 200px;
+    
+    margin: 4px;
+    display: inline-block;
+}
+th, td{
+    border: solid 1px #eee;
+    padding: 5px;
+}
+.centrar{
+
+margin: 30px;
+display: flex;
+justify-content: center;
+
+}
+
+</style>
+
+{% endblock %}
 {%  load static  %}
 
 
 {% block content  %}
 
+<div id="cdes">
+        <div class="desplegable">
 
-    <p>{{nombre}}</p>
-    <p>{{ap_pat}}</p>
-    <p>{{ap_mat}}</p>
-    <p>{{carrera}}</p>
-    <p>{{matricula}}</p>
-    <p>{{plan}}</p>
 
-    {%for m in materias.values%}
-        <p>{{m}}</p>
-    {%endfor%}
+            <!--Desplegable del plan estudio carrera donde proviene-->
+            <select name="planCarreraDe" form="post_equivalencia" required>
+                
+                    {%for cp in cpl%}
+                <option value="{{cp.idPlanEstudioCarrera}}">
+                    {{cp.idCarrera}} - {{cp.idPlanEstudio}}
+                    </option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="desplegable"><p>A</p></div>
+        <div class="desplegable">
 
-	
+                <!--Desplegable del plan estudio carrera a donde se dirige -->
+            <select name="planCarreraA" form="post_equivalencia" required>
+                
+                {%for cp in cpl%}
+                <option value="{{cp.idPlanEstudioCarrera}}">
+                    {{cp.idCarrera}} - {{cp.idPlanEstudio}}
+                    </option>
+                {%endfor%}
+            </select>
+        </div>
+    </div>
+    <div>
+</div>
+<div>
+    <p class="centrar">NOMBRE: {{nombre}} {{ap_pat}} {{ap_mat}}</p>
+    <P class="centrar">CARRERA: {{carrera}}</P>
+    <P class="centrar">MATRICULA: {{matricula}}</P>
+    <P class="centrar">PLAN DE ESTUDIO: {{planDe}}</P>
+    
+    
+</div>
+<div id="contenedor" class="centrar">
+    <div class="item">
+<table class="table" id="tabla1"style="width:680px; height: 338px; border-collapse: collapse;">
 
+    <thead class="thead-dark">
+      <tr>
+        <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center"></td>
+      </tr>
+      <tr>
+        <th scope="col">Clave</th>
+        <th scope="col">Materia</th>
+        <th scope="col">Calif</th>
+        <th scope="col">Exa</th>
+        <th scope="col">Cred</th>
+        <th scope="col">Periodo</th>
+      </tr>
+    </thead>
+    <tbody >
+      {%for e in equivalencia%}
+      <tr>
+        
+        <td >{{e.mde.idMateria.ClaveMateria}}</td>
+        <td >{{e.mde.idMateria.NombreMateria}}</td>
+        <td >{{e.cali}}</td>
+        <td >{{e.examen}}</td>
+        <td >{{e.mde.idMateria.Creditos}}</td>
+        <td >{{e.periodo}}</td>
+      </tr>
+      {%endfor%}
+      {% if mnp%}
+        {%for m in mnp%}
+            <tr>
+                
+                <td >{{m.clave}}</td>
+                <td >{{m.nombre}}</td>
+                <td >{{m.cali}}</td>
+                <td >{{m.examen}}</td>
+                <td >{{m.creditos}}</td>
+                <td >{{m.periodo}}</td>
+            </tr>
+            {%endfor%}
+      {%endif%}
+    </tbody>
+</table>
+    </div>
+
+    <div class="item">
+        <table class="table" id="tabla2"style="width:680px; height: 338px; border-collapse: collapse;">
+
+            <thead class="thead-dark">
+              <tr>
+                <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center"></td>
+              </tr>
+              <tr>
+                <th scope="col">Clave</th>
+                <th scope="col">Materia</th>
+                <th scope="col">Calif</th>
+                <th scope="col">Exa</th>
+                <th scope="col">Cred</th>
+                <th scope="col">Periodo</th>
+              </tr>
+            </thead>
+            <tbody >
+              {%for e in equivalencia%}
+              <tr>
+                
+                <td >{{e.ma.idMateria.ClaveMateria}}</td>
+                <td >{{e.ma.idMateria.NombreMateria}}</td>
+                <td >{{e.cali}}</td>
+                <td >{{e.examen}}</td>
+                <td >{{e.ma.idMateria.Creditos}}</td>
+                <td >{{e.periodo}}</td>
+              </tr>
+              {%endfor%}
+              {% if mnp%}
+                {%for m in mnp%}
+                    <tr>
+                        
+                        <td >{{m.clave}}</td>
+                        <td >{{m.nombre}}</td>
+                        <td >{{m.cali}}</td>
+                        <td >{{m.examen}}</td>
+                        <td >{{m.creditos}}</td>
+                        <td >{{m.periodo}}</td>
+                    </tr>
+                    {%endfor%}
+              {%endif%}
+            </tbody>
+        </table>
+    </div>
+</div>
     {%  endblock   %}

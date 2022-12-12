@@ -31,6 +31,6 @@ urlpatterns = [
     path('update_Equivalencia_elaborar_<int:id>_<int:idmat>_<int:idplanDE>_<int:idplanA>/',views.update_Equivalencia_elaborar,name='update_Equivalencia_elaborar'),
     
     #equivalencia alumno
-    path('alumno_Equivalencia/',views.alumno_Equivalencia,name="Alumno_Equivalencia"),
+    path('alumno_Equivalencia/',views.alumno_Equivalencia,name="alumno_Equivalencia"),
     
 ]
