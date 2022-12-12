@@ -183,7 +183,6 @@ def Subir_Kardex(request):
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
-
 def Elegir_Acreditacion(request):
     return render(request,"ValidacionMaterias/Elegir_Acreditacion.html")
 
@@ -230,7 +229,6 @@ def handle_file(file, name):
         for chunk in file.chunks():
             destination.write(chunk)
 
-
 def leer_kardex(archivo):
     kardex = {}
     wb = archivo
@@ -263,7 +261,7 @@ def leer_kardex(archivo):
     contador_renglon = 0
     contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
                     'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
-    materias = {}
+    materias={}
     while contador_ciclo < sh.nrows:
         renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
         if(renglon != "nan"):
@@ -517,9 +515,11 @@ class materias_no_plan:
  
 
 def alumno_Equivalencia(request):
-    idpcDE = 1
-    idpcA = 2
-    kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/354020.XLS')
+    
+    idpcDE = 4
+    idpcA = 3
+
+    kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/prueba.xls')
 
       #Todos los registros de las tablas comparativas
     registros = RegistroEquivalenciaComparativa.objects.all()
@@ -555,13 +555,46 @@ def alumno_Equivalencia(request):
                     claves.append(int(m[0]))
     for m in materias:
         if int(m[0]) not in claves:
+            
             if len(m) == 7:
                 mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
             elif len(m) == 8:
                 mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
 
+    matricula = kardex['matricula']
 
-    return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",kardex)
+    aux= matricula[2:] 
+    matricula= aux[0] +  aux[2:] 
+
+    if len(mnp) == 0:
+        context= {
+            
+            "nombre":kardex['nombre'],
+            "ap_pat":kardex['ap_pat'],
+            "ap_mat":kardex['ap_mat'],
+            "carrera":kardex['carrera'],
+            "matricula":matricula,
+            "planDe":kardex['plan'],
+            "equivalencia":alumno_equivalencia
+        }
+
+
+    else:
+        context= {
+            "nombre":kardex['nombre'],
+            "ap_pat":kardex['ap_pat'],
+            "ap_mat":kardex['ap_mat'],
+            "carrera":kardex['carrera'],
+            "matricula":matricula,
+            "planDe":kardex['plan'],
+            "equivalencia":alumno_equivalencia,
+            "mnp":mnp
+        }
+    
+
+    
+
+    return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
     
 
     
