@@ -4,8 +4,26 @@ from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
- 
+from fpdf import FPDF 
+from datetime import date
+from datetime import datetime
 # Create your views here.
+
+def current_date_format(date):
+    #definir fecha actual
+     months = ("Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+     day = date.day
+     month = months[date.month - 1]
+     year = date.year
+     messsage = "{} de {} del {}".format(day, month, year)
+
+     return messsage
+
+
+
+
+
+
 context = Context({"resp": " "})
 def home(request):
     return render(request,"ValidacionMaterias/home.html")
@@ -121,17 +139,47 @@ def Editar_materia(request):
 def Subir_Kardex(request):
     context = {}
     if request.method == 'GET':
+        context['bandera'] = False
         return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
     elif request.method == 'POST':
         if 'boton_subir' in request.POST:
+            #añadimos datos subidos al contexto y mandamos a la siguiente vista
+            context['nombre'] = request.POST['nombre']
+            context['ap_pat'] = request.POST['ap_pat']
+            context['ap_mat'] = request.POST['ap_mat']
+            context['carrera'] = request.POST['carrera']
+            context['matricula'] = request.POST['matricula']
+            context['plan_de_estudios'] = request.POST['plan_de_estudios']
+            context['archivo'] = request.POST['archivo']
+            print(context)
+            #reemplazar este return por el de la siguiente vista
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+            #return render(request,"ValidacionMaterias/Alumno_Equivalencia.html",context)
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
             print("tengo un archivo")
             name = archivo.name
             handle_file(archivo,name)
+            kardex = leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/' +name)
+            context['nombre']= kardex['nombre']
+            context['ap_pat']= kardex['ap_pat']
+            context['ap_mat']= kardex['ap_mat']
+            context['carrera']= kardex['carrera']
+            context['matricula']= kardex['matricula']
+            context['plan_de_estudios']= kardex['plan']
+            context['archivo'] = name
+            context['bandera'] = True
+                
+            items = []
+            for llave in kardex['materias']:
+                contenido = kardex['materias'][llave]
+                if(len(contenido)>7):
+                    an_item = dict(clave=contenido[0],materia=contenido[1],creditos=contenido[2],tipo=contenido[3],calif=contenido[4],fecha=contenido[5],periodo=contenido[7])
+                else:    
+                    an_item = dict(clave=contenido[0],materia=contenido[1],creditos=contenido[2],tipo=contenido[3],calif=contenido[4],fecha=contenido[5],periodo=contenido[6])
+                items.append(an_item)   
             
-
+            context['materias'] = items
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
@@ -246,6 +294,64 @@ def leer_kardex(archivo):
     kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
     return kardex
+
+class ClassPDF(FPDF):
+    
+    
+
+    def header(self):
+        
+        self.set_xy(50,0.0)
+        self.set_font('Arial','',16)
+        self.cell(w=100,h=50,align= 'C',txt='Universidad Autonoma de Baja California \n  ',border=0)
+        self.set_xy(48,10)
+        self.cell(w=100,h=50,align= 'C',txt='Facultad de Ingenieria Arquitectura y Diseño ',border=0)
+        self.set_font('Arial','',12)
+        self.set_xy(10,35)
+        self.cell(w=100,h=50,align= 'L',txt='A quien corresponda ',border=0)
+
+        self.set_xy(0,45)
+        self.cell(w=210,h=50,align= 'J',txt=' Por medio de la presente solicito de la manera más atenta se haga la acreditación de las asignaturas que se ',border=0)
+        self.set_xy(0,50)
+        self.cell(w=210,h=50,align= 'J',txt=' menciona en el cuadro del alumno VALENCIA MADRIGAL RENE ANTONIO con matrícula  del plan de estudios 2009-2  ',border=0)
+        self.set_xy(0,55)
+        self.cell(w=210,h=50,align= 'J',txt=' de Ingeniero en Electrónica',border=0)
+    def fecha(self):
+        now = datetime.now()
+        today= current_date_format(now)
+        self.set_xy(100,25)
+        self.set_font('Arial','',12)
+        self.cell(w=100,h=50,align= 'R',txt='Ensenada,Baja California a '+today,border=0)
+        
+
+    def body(self):
+        self.set_xy(100,0)
+        self.cell(w=210,h=210,align= 'R',txt='AAAAAA ',border=0)
+
+
+
+    def footer(self):
+        self.set_xy(10,50)
+        self.cell(w=100,h=210,align= 'L',txt='Sin más por el momento quedo a sus apreciables órdenes para cualquier aclaración ',border=0) 
+        
+def pdf(request):
+    context={}
+    
+    pdf = ClassPDF()
+    pdf.add_page()
+    pdf.header()
+    pdf.fecha()
+    pdf.body()
+    pdf.footer()
+    pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/ejemplo.pdf',dest='f')
+    return render(request,"ValidacionMaterias/vista_pdf.html",context)
+
+
+
+
+
+
+
 
 
 # guarda el las materias asosiados a plan estudio carrera del registro de equivalencia para moder mostrar a las tablas y tener accesoa los datos
