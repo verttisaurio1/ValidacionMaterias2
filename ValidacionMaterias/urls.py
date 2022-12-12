@@ -1,6 +1,7 @@
 from django.urls import path
 from ValidacionMaterias import views
 
+# Esto sirve para direccionar con el name que se le da al path
 app_name = 'aplication'
 
 urlpatterns = [
@@ -15,17 +16,25 @@ urlpatterns = [
     path('Editar_Materia/',views.Editar_materia ,name="Editar_Materia"),
     path('Agregar_Carrera_Plan/',views.Agregar_Carrera_Plan,name="Agregar_Carrera_Plan"),
     path('Agregar_Materia_Plan/',views.Agregar_materia_Plan,name="Agregar_Materia_Plan"),
+    
     path('Subir_Kardex/',views.Subir_Kardex,name="Subir_Kardex"),
     path('Elegir_Acreditacion/',views.Elegir_Acreditacion,name="Elegir_Acreditacion"),
 
     path('test/',views.test,name="test"),
+
     path('fun_search/',views.fun_search_materia),
     path('fun_a_materia/',views.fun_a_materia),
     
-    #Equivalencia
     path('Equivalencia/',views.Equivalencia,name="Equivalencia"),
     path('Equivalencia/actualizar_Tabla_<int:idplanDE>_<int:idplanA>/',views.actualizar_Tabla,name="actualizar_Tabla"),
     path('update_Equivalencia_<int:id>_<int:idplanDE>_<int:idplanA>_<int:ban>/',views.update_Equivalencia,name='update_Equivalencia'),
     path('update_Equivalencia_elaborar_<int:id>_<int:idmat>_<int:idplanDE>_<int:idplanA>/',views.update_Equivalencia_elaborar,name='update_Equivalencia_elaborar'),
     
+<<<<<<< Updated upstream
+
+=======
+    #equivalencia alumno
+    path('alumno_Equivalencia/',views.alumno_Equivalencia,name="Alumno_Equivalencia"),
+    
+>>>>>>> Stashed changes
 ]

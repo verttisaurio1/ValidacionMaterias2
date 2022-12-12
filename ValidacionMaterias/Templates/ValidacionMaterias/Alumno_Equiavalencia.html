@@ -1,0 +1,24 @@
+
+{% extends  "ValidacionMaterias/base.html"  %}
+
+
+{%  load static  %}
+
+
+{% block content  %}
+
+
+    <p>{{nombre}}</p>
+    <p>{{ap_pat}}</p>
+    <p>{{ap_mat}}</p>
+    <p>{{carrera}}</p>
+    <p>{{matricula}}</p>
+    <p>{{plan}}</p>
+
+    {%for m in materias.values%}
+        <p>{{m}}</p>
+    {%endfor%}
+
+	
+
+    {%  endblock   %}

@@ -135,6 +135,7 @@ def Subir_Kardex(request):
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
+
 def Elegir_Acreditacion(request):
     return render(request,"ValidacionMaterias/Elegir_Acreditacion.html")
 
@@ -157,6 +158,7 @@ def fun_search_materia(request):
         materia=Materia.objects.get(ClaveMateria=(request.POST["clav"]))
         return render(request,"ValidacionMaterias/Agregar_Plan.html",materia)
     
+
 def test(request):
     context = {}
     planestudio = PlanEstudio.objects.all()
@@ -213,7 +215,7 @@ def leer_kardex(archivo):
     contador_renglon = 0
     contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
                     'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
-    materias={}
+    materias = {}
     while contador_ciclo < sh.nrows:
         renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
         if(renglon != "nan"):
@@ -223,7 +225,7 @@ def leer_kardex(archivo):
                 if(contenido != "nan"):
                     lista.append(contenido)
             
-            if(lista[4].isnumeric):
+            if(lista[4].isnumeric()):
                 if(int(lista[4])>60):
                     materias[contador_renglon] = lista
                     contador_renglon = contador_renglon + 1
@@ -386,3 +388,74 @@ def update_Equivalencia_elaborar(request,id,idmat,idplanDE,idplanA):
     # redireccioname a las tablas de equivalencia
     return redirect('aplication:actualizar_Tabla',idplanDE=idplanDE,idplanA= idplanA)
 
+
+
+class datos_materias:
+    def __init__(self,mde,ma,examen,cali,periodo):
+        
+        self.mde = mde
+        self.ma = ma
+        self.examen = examen
+        self.cali = cali
+        self.periodo = periodo
+
+class materias_no_plan:
+    def __init__(self,clave,nombre,creditos,examen,cali,periodo):
+        
+        self.clave = clave
+        self.nombre = nombre
+        self.creditos = creditos
+        self.examen = examen
+        self.cali = cali
+        self.periodo = periodo
+ 
+
+def alumno_Equivalencia(request):
+    idpcDE = 1
+    idpcA = 2
+    kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/354020.XLS')
+
+      #Todos los registros de las tablas comparativas
+    registros = RegistroEquivalenciaComparativa.objects.all()
+
+    # lista donde se guardaran todos id que ya estan asociados 
+    datos_Equivalencia = []
+
+    #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+    for r in registros:
+        materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+        materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            
+        #filtra los datos de los planes estudio carrera seleccionados a los registros
+        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
+                # Se guardaran todos los ids que coinsidan
+                datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
+                
+
+    materias = kardex['materias'].values()
+    alumno_equivalencia = []
+    claves = []
+    mnp = []
+
+    for m in materias:
+        for e in datos_Equivalencia:
+            if len(m) == 7:
+                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
+                    claves.append(int(m[0]))
+            elif len(m) == 8:
+                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
+                    claves.append(int(m[0]))
+    for m in materias:
+        if int(m[0]) not in claves:
+            if len(m) == 7:
+                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
+            elif len(m) == 8:
+                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
+
+
+    return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",kardex)
+    
+
+    
