@@ -32,11 +32,7 @@ urlpatterns = [
     path('update_Equivalencia_<int:id>_<int:idplanDE>_<int:idplanA>_<int:ban>/',views.update_Equivalencia,name='update_Equivalencia'),
     path('update_Equivalencia_elaborar_<int:id>_<int:idmat>_<int:idplanDE>_<int:idplanA>/',views.update_Equivalencia_elaborar,name='update_Equivalencia_elaborar'),
     
-<<<<<<< Updated upstream
-
-=======
     #equivalencia alumno
     path('alumno_Equivalencia/',views.alumno_Equivalencia,name="Alumno_Equivalencia"),
     
->>>>>>> Stashed changes
 ]
