@@ -216,7 +216,7 @@ def leer_kardex(archivo):
     contador_renglon = 0
     contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
                     'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
-
+    materias = {}
     while contador_ciclo < sh.nrows:
         renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
         if(renglon != "nan"):
@@ -225,9 +225,6 @@ def leer_kardex(archivo):
                 contenido = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols=columna, nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
                 if(contenido != "nan"):
                     lista.append(contenido)
-<<<<<<< Updated upstream
-            print(lista)
-=======
             
             if(lista[4].isnumeric()):
                 if(int(lista[4])>60):
@@ -238,7 +235,6 @@ def leer_kardex(archivo):
                 if(lista[4] not in ("NP","SD")):
                     materias[contador_renglon] = lista
                     contador_renglon = contador_renglon + 1
->>>>>>> Stashed changes
         contador_ciclo = contador_ciclo + 1
     
     #aqui en teoria hay que meter los datos al diccionario kardex
@@ -385,16 +381,12 @@ def update_Equivalencia_elaborar(request,id,idmat,idplanDE,idplanA):
     id_registro = id
     registro= RegistroEquivalenciaComparativa.objects.get(idRegistroEquivalenciaComparativa=id_registro)
     registro.idMateriaA=int(idmat)
-    print("*************",idmat,"***********")
     registro.save()
    
     # redireccioname a las tablas de equivalencia
     return redirect('aplication:actualizar_Tabla',idplanDE=idplanDE,idplanA= idplanA)
 
 
-<<<<<<< Updated upstream
-            
-=======
 
 class datos_materias:
     def __init__(self,mde,ma,examen,cali,periodo):
@@ -465,4 +457,3 @@ def alumno_Equivalencia(request):
     
 
     
->>>>>>> Stashed changes
