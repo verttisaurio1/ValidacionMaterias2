@@ -27,44 +27,45 @@
 			<input id="file-input" type="file" name="document" form="Buscar" onchange="this.form.submit();" />
 		</div>
 	</div>
+	
 	<div class="divisor">
 		<div class="parte1">
 			<div class="campo">
 				<p>Nombre(s)</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="nombre"
+					id="nombre"
 					type="text"
 					placeholder="Nombre(s)"
-					value="{{materia.NombreMateria}}"
+					value="{{nombre}}"
 					required />
 			</div>
 
 			<div class="campo">
 				<p>Apellido Paterno</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="ap_pat"
+					id="ap_pat"
 					type="text"
 					placeholder="Apellido Materno"
-					value="{{materia.NombreMateria}}"
+					value="{{ap_pat}}"
 					required />
 			</div>
 
 			<div class="campo">
 				<p>Apellido Materno</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="ap_mat"
+					id="ap_mat"
 					type="text"
 					placeholder="Apellido Materno"
-					value="{{materia.NombreMateria}}"
+					value="{{ap_mat}}"
 					required />
 			</div>
 		</div>
@@ -73,13 +74,13 @@
 			<div class="campo">
 				<p>Carrera</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="carrera"
+					id="carrera"
 					type="text"
 					placeholder="Carrera"
-					value="{{materia.NombreMateria}}"
+					value="{{carrera}}"
 					required />
 			</div>
 		</div>
@@ -88,13 +89,13 @@
 			<div class="campo">
 				<p>Matricula</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="matricula"
+					id="matricula"
 					type="text"
 					placeholder="Matricula"
-					value="{{materia.NombreMateria}}"
+					value="{{matricula}}"
 					required />
 			</div>
 		</div>
@@ -103,13 +104,13 @@
 			<div class="campo">
 				<p>Plan de Estudios</p>
 				<input
-					form="Agregar_Plan"
+					form="Subir"
 					class="textbox"
-					name="display_name"
-					id="display_name"
+					name="plan_de_estudios"
+					id="plan_de_estudios"
 					type="text"
 					placeholder="Plan de Estudios"
-					value="{{materia.NombreMateria}}"
+					value="{{plan_de_estudios}}"
 					required />
 			</div>
 		</div>
@@ -129,27 +130,26 @@
 				<th>Ordinario/Extraordinario</th>
 				<th>Creditos</th>
 			</tr>
-
+			{% for materia in materias %}
 			<tr>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
+				<td>{{materia.clave}}</td>
+				<td>{{materia.materia}}</td>
+				<td>{{materia.calif}}</td>
+				<td>{{materia.periodo}}</td>
+				<td>{{materia.tipo}}</td>
+				<td>{{materia.creditos}}</td>
 			</tr>
-			<tr>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-				<td>prueba</td>
-			</tr>
+			{% endfor %}
 		</table>
 	</div>
 	<div class="div-botoncito">
+		
+		<input form="Subir" type="hidden" name="archivo" id="archivo" value="{{archivo}}">
+		{% if bandera %}
 		<input type="submit" form="Subir" name="boton_subir" class="botoncito" value="Continuar">
+		{% else %}
+		<input type="submit" form="Subir" name="boton_subir" class="botoncito" value="Continuar" disabled>
+		{% endif %}
 	</div>
 </div>
-{% endblock %} {% block afuera %} {% endblock %}
+{% endblock %} 
