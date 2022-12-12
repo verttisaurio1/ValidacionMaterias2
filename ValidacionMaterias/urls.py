@@ -16,6 +16,8 @@ urlpatterns = [
     path('Subir_Kardex/',views.Subir_Kardex,name="Subir_Kardex"),
     path('Elegir_Acreditacion/',views.Elegir_Acreditacion,name="Elegir_Acreditacion"),
 
+    path('vista_pdf/',views.pdf,name="vista_pdf"),
+
     path('test/',views.test,name="test"),
     path('fun_search/',views.fun_search_materia),
     path('fun_a_materia/',views.fun_a_materia),
