@@ -4,8 +4,26 @@ from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
- 
+from fpdf import FPDF 
+from datetime import date
+from datetime import datetime
 # Create your views here.
+
+def current_date_format(date):
+    #definir fecha actual
+     months = ("Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+     day = date.day
+     month = months[date.month - 1]
+     year = date.year
+     messsage = "{} de {} del {}".format(day, month, year)
+
+     return messsage
+
+
+
+
+
+
 context = Context({"resp": " "})
 def home(request):
     return render(request,"ValidacionMaterias/home.html")
@@ -165,6 +183,7 @@ def Subir_Kardex(request):
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
 
 
+
 def Elegir_Acreditacion(request):
     return render(request,"ValidacionMaterias/Elegir_Acreditacion.html")
 
@@ -187,6 +206,7 @@ def fun_search_materia(request):
         materia=Materia.objects.get(ClaveMateria=(request.POST["clav"]))
         return render(request,"ValidacionMaterias/Agregar_Plan.html",materia)
     
+
 def test(request):
     context = {}
     planestudio = PlanEstudio.objects.all()
@@ -243,7 +263,7 @@ def leer_kardex(archivo):
     contador_renglon = 0
     contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
                     'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
-    materias={}
+    materias = {}
     while contador_ciclo < sh.nrows:
         renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
         if(renglon != "nan"):
@@ -274,6 +294,64 @@ def leer_kardex(archivo):
     kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
     return kardex
+
+class ClassPDF(FPDF):
+    
+    
+
+    def header(self):
+        
+        self.set_xy(50,0.0)
+        self.set_font('Arial','',16)
+        self.cell(w=100,h=50,align= 'C',txt='Universidad Autonoma de Baja California \n  ',border=0)
+        self.set_xy(48,10)
+        self.cell(w=100,h=50,align= 'C',txt='Facultad de Ingenieria Arquitectura y Diseño ',border=0)
+        self.set_font('Arial','',12)
+        self.set_xy(10,35)
+        self.cell(w=100,h=50,align= 'L',txt='A quien corresponda ',border=0)
+
+        self.set_xy(0,45)
+        self.cell(w=210,h=50,align= 'J',txt=' Por medio de la presente solicito de la manera más atenta se haga la acreditación de las asignaturas que se ',border=0)
+        self.set_xy(0,50)
+        self.cell(w=210,h=50,align= 'J',txt=' menciona en el cuadro del alumno VALENCIA MADRIGAL RENE ANTONIO con matrícula  del plan de estudios 2009-2  ',border=0)
+        self.set_xy(0,55)
+        self.cell(w=210,h=50,align= 'J',txt=' de Ingeniero en Electrónica',border=0)
+    def fecha(self):
+        now = datetime.now()
+        today= current_date_format(now)
+        self.set_xy(100,25)
+        self.set_font('Arial','',12)
+        self.cell(w=100,h=50,align= 'R',txt='Ensenada,Baja California a '+today,border=0)
+        
+
+    def body(self):
+        self.set_xy(100,0)
+        self.cell(w=210,h=210,align= 'R',txt='AAAAAA ',border=0)
+
+
+
+    def footer(self):
+        self.set_xy(10,50)
+        self.cell(w=100,h=210,align= 'L',txt='Sin más por el momento quedo a sus apreciables órdenes para cualquier aclaración ',border=0) 
+        
+def pdf(request):
+    context={}
+    
+    pdf = ClassPDF()
+    pdf.add_page()
+    pdf.header()
+    pdf.fecha()
+    pdf.body()
+    pdf.footer()
+    pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/ejemplo.pdf',dest='f')
+    return render(request,"ValidacionMaterias/vista_pdf.html",context)
+
+
+
+
+
+
+
 
 
 # guarda el las materias asosiados a plan estudio carrera del registro de equivalencia para moder mostrar a las tablas y tener accesoa los datos
@@ -416,3 +494,74 @@ def update_Equivalencia_elaborar(request,id,idmat,idplanDE,idplanA):
     # redireccioname a las tablas de equivalencia
     return redirect('aplication:actualizar_Tabla',idplanDE=idplanDE,idplanA= idplanA)
 
+
+
+class datos_materias:
+    def __init__(self,mde,ma,examen,cali,periodo):
+        
+        self.mde = mde
+        self.ma = ma
+        self.examen = examen
+        self.cali = cali
+        self.periodo = periodo
+
+class materias_no_plan:
+    def __init__(self,clave,nombre,creditos,examen,cali,periodo):
+        
+        self.clave = clave
+        self.nombre = nombre
+        self.creditos = creditos
+        self.examen = examen
+        self.cali = cali
+        self.periodo = periodo
+ 
+
+def alumno_Equivalencia(request):
+    idpcDE = 1
+    idpcA = 2
+    kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/354020.XLS')
+
+      #Todos los registros de las tablas comparativas
+    registros = RegistroEquivalenciaComparativa.objects.all()
+
+    # lista donde se guardaran todos id que ya estan asociados 
+    datos_Equivalencia = []
+
+    #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+    for r in registros:
+        materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+        materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            
+        #filtra los datos de los planes estudio carrera seleccionados a los registros
+        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
+                # Se guardaran todos los ids que coinsidan
+                datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
+                
+
+    materias = kardex['materias'].values()
+    alumno_equivalencia = []
+    claves = []
+    mnp = []
+
+    for m in materias:
+        for e in datos_Equivalencia:
+            if len(m) == 7:
+                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
+                    claves.append(int(m[0]))
+            elif len(m) == 8:
+                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
+                    claves.append(int(m[0]))
+    for m in materias:
+        if int(m[0]) not in claves:
+            if len(m) == 7:
+                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
+            elif len(m) == 8:
+                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
+
+
+    return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",kardex)
+    
+
+    
