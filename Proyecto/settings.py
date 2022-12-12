@@ -56,7 +56,7 @@ ROOT_URLCONF = 'Proyecto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR /'ValidacionMaterias'/ 'Templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

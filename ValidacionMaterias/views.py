@@ -4,14 +4,11 @@ from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
-
-
+ 
 # Create your views here.
 context = Context({"resp": " "})
 def home(request):
     return render(request,"ValidacionMaterias/home.html")
-
-
 
 def Agregar_plan(request):
     context = {}
@@ -117,6 +114,8 @@ def Registro_materias(request):
 
 def Editar_materia(request):
     return render(request,"ValidacionMaterias/Editar_Materia.html")
+
+
     
 
 def Subir_Kardex(request):
@@ -129,10 +128,12 @@ def Subir_Kardex(request):
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
             print("tengo un archivo")
-            print(archivo)
-            contenido = archivo.read()
-            pf = pd.read_csv(contenido)            
+            name = archivo.name
+            handle_file(archivo,name)
+            
+
             return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+
 
 
 def Elegir_Acreditacion(request):
@@ -177,7 +178,7 @@ def test(request):
     return render(request,"ValidacionMaterias/test.html",context)
 
 def handle_file(file, name):
-    with open('blog/static/Kardex/' + name,'wb+') as destination:
+    with open('ValidacionMaterias/static/ValidacionMaterias/Kardex/' + name,'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
 
@@ -201,16 +202,14 @@ def leer_kardex(archivo):
 
     #obtener carrera
     carrera = pd.read_excel(documento, skiprows=7 - 1, usecols='I', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
-    print(carrera)
+    
 
     #obtener matricula
     matricula = pd.read_excel(documento, skiprows=9 - 1, usecols='G', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
-    print(matricula)
 
 
     #obtener plan de estudios
     plan_de_estudios = pd.read_excel(documento, skiprows=9 - 1, usecols='AR', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
-    print(plan_de_estudios)
 
     contador_ciclo = 0
     contador_renglon = 0
@@ -228,7 +227,6 @@ def leer_kardex(archivo):
             
             if(lista[4].isnumeric()):
                 if(int(lista[4])>60):
-                    
                     materias[contador_renglon] = lista
                     contador_renglon = contador_renglon + 1
             else:
@@ -242,8 +240,12 @@ def leer_kardex(archivo):
     kardex['nombre'] = nombre
     kardex['ap_pat'] = ap_pat
     kardex['ap_mat'] = ap_mat
-    
+    kardex['carrera'] = carrera
+    kardex['matricula'] = matricula
+    kardex['plan'] = plan_de_estudios
+    kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
+    return kardex
 
 
 # guarda el las materias asosiados a plan estudio carrera del registro de equivalencia para moder mostrar a las tablas y tener accesoa los datos
