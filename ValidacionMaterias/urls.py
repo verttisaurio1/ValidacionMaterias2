@@ -16,10 +16,12 @@ urlpatterns = [
     path('Editar_Materia/',views.Editar_materia ,name="Editar_Materia"),
     path('Agregar_Carrera_Plan/',views.Agregar_Carrera_Plan,name="Agregar_Carrera_Plan"),
     path('Agregar_Materia_Plan/',views.Agregar_materia_Plan,name="Agregar_Materia_Plan"),
+    
     path('Subir_Kardex/',views.Subir_Kardex,name="Subir_Kardex"),
     path('Elegir_Acreditacion/',views.Elegir_Acreditacion,name="Elegir_Acreditacion"),
 
     path('test/',views.test,name="test"),
+
     path('fun_search/',views.fun_search_materia),
     path('fun_a_materia/',views.fun_a_materia),
     

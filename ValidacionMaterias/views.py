@@ -2,7 +2,9 @@ from django.template import Context ,Template
 from pickle import GET
 from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
-import pandas
+import pandas as pd
+import xlrd
+
 
 # Create your views here.
 context = Context({"resp": " "})
@@ -119,7 +121,19 @@ def Editar_materia(request):
 
 def Subir_Kardex(request):
     context = {}
-    return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+    if request.method == 'GET':
+        return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+    elif request.method == 'POST':
+        if 'boton_subir' in request.POST:
+            return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+        elif 'document' in request.FILES:
+            archivo = request.FILES['document']
+            print("tengo un archivo")
+            print(archivo)
+            contenido = archivo.read()
+            pf = pd.read_csv(contenido)            
+            return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+
 
 def Elegir_Acreditacion(request):
     return render(request,"ValidacionMaterias/Elegir_Acreditacion.html")
@@ -143,6 +157,7 @@ def fun_search_materia(request):
         materia=Materia.objects.get(ClaveMateria=(request.POST["clav"]))
         return render(request,"ValidacionMaterias/Agregar_Plan.html",materia)
     
+
 def test(request):
     context = {}
     planestudio = PlanEstudio.objects.all()
@@ -160,6 +175,66 @@ def test(request):
 
     
     return render(request,"ValidacionMaterias/test.html",context)
+
+def handle_file(file, name):
+    with open('blog/static/Kardex/' + name,'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+def leer_kardex(archivo):
+    kardex = {}
+    wb = archivo
+    documento = xlrd.open_workbook(wb, encoding_override='ISO-8859-1')
+    sh = documento.sheet_by_index(0)
+
+    #obtener nombre
+    nombre_completo = pd.read_excel(documento, skiprows=9 - 1, usecols='I', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    
+
+    #separar nombre 
+    lista = nombre_completo.split(" ")
+    ap_mat = lista.pop()
+    ap_pat = lista.pop()
+    nombre = ""
+    nombre = " ".join(lista)
+
+    #obtener carrera
+    carrera = pd.read_excel(documento, skiprows=7 - 1, usecols='I', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(carrera)
+
+    #obtener matricula
+    matricula = pd.read_excel(documento, skiprows=9 - 1, usecols='G', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(matricula)
+
+
+    #obtener plan de estudios
+    plan_de_estudios = pd.read_excel(documento, skiprows=9 - 1, usecols='AR', nrows=1, header=None, names=["Value"]).iloc[0]["Value"]
+    print(plan_de_estudios)
+
+    contador_ciclo = 0
+    contador_renglon = 0
+    contador_columna = ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                    'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT')
+
+    while contador_ciclo < sh.nrows:
+        renglon = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols='A', nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
+        if(renglon != "nan"):
+            lista = []
+            for columna in contador_columna:
+                contenido = str(pd.read_excel(documento, skiprows=contador_ciclo, usecols=columna, nrows=1, header=None, names=["Value"]).iloc[0]["Value"])
+                if(contenido != "nan"):
+                    lista.append(contenido)
+            print(lista)
+        contador_ciclo = contador_ciclo + 1
+    
+    #aqui en teoria hay que meter los datos al diccionario kardex
+    #seria algo como  kardex["cosa"] = cosa
+    kardex['nombre'] = nombre
+    kardex['ap_pat'] = ap_pat
+    kardex['ap_mat'] = ap_mat
+    
+    #finalmente regresamos el diccionario con un return kardex
 
 
 # guarda el las materias asosiados a plan estudio carrera del registro de equivalencia para moder mostrar a las tablas y tener accesoa los datos
@@ -199,7 +274,6 @@ def Equivalencia(request):
             
            #filtra los datos de los planes estudio carrera seleccionados a los registros
             if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(carrera_planDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(carrera_planA):
-                
                 # Se guardaran todos los ids que coinsidan
                 datos_Equivalencia.append(int(materiaDe.idPlanEstudioCarreraMateria))
 
@@ -219,14 +293,17 @@ def Equivalencia(request):
         # si los datos de los planes estudio carrera seleccionados a los registros es igual a cero asigna a todos los datos un sin equivalencia
         if len(datos_Equivalencia) == 0:
             for m in materiasDe:
-                    reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
-                    reg.save()
+                    if int(m.idMateria.ClaveMateria) != 0:
+                       
+                        reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
+                        reg.save()
         else:
             # de lo contrario verifica a cuales les puedes asignar un sin equivalencia para no afectar el registro anterior
             for m in materiasDe:
                 if int(m.idPlanEstudioCarreraMateria) not in datos_Equivalencia:
-                    reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
-                    reg.save()
+                    if int(m.idMateria.ClaveMateria) != 0:
+                        reg = RegistroEquivalenciaComparativa(idMateriaDe=m.idPlanEstudioCarreraMateria,idMateriaA=clave)
+                        reg.save()
  
         return redirect('aplication:actualizar_Tabla',idplanDE = carrera_planDE,idplanA = carrera_planA)
                   
@@ -236,7 +313,11 @@ def Equivalencia(request):
 
 def actualizar_Tabla(request,idplanDE,idplanA):
 
-    
+    materiasDE = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=idplanDE)
+    for m in materiasDE:
+        if int(m.idMateria.ClaveMateria) == 0:
+            clave = m.idPlanEstudioCarreraMateria
+
     #Todos los registros de las tablas comparativas
     registros = RegistroEquivalenciaComparativa.objects.all()
 
@@ -249,8 +330,8 @@ def actualizar_Tabla(request,idplanDE,idplanA):
         materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
         materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
             
-        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idplanDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idplanA):
-               
+        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idplanDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idplanA) :
+            
             # Se guardara el objeto para tener acceso al: identificador del registro, su materiaDE y su materiaA
             datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
 
@@ -291,7 +372,9 @@ def update_Equivalencia_elaborar(request,id,idmat,idplanDE,idplanA):
     id_registro = id
     registro= RegistroEquivalenciaComparativa.objects.get(idRegistroEquivalenciaComparativa=id_registro)
     registro.idMateriaA=int(idmat)
+    print("*************",idmat,"***********")
     registro.save()
+   
     # redireccioname a las tablas de equivalencia
     return redirect('aplication:actualizar_Tabla',idplanDE=idplanDE,idplanA= idplanA)
 
