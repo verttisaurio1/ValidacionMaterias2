@@ -1,9 +1,24 @@
 
 {% extends  "ValidacionMaterias/base.html"  %}
-
+{% block head %}
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+{% endblock %}
 
 {%  load static  %}
 
+{% block botones %}
+
+<div class="Botones">
+	<button class="Side_bar_button" onclick="location.href = '/home'">HOME</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia_Plan'">Agregar Materia a Plan de Estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera_Plan'">Agregar Carrera a Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Plan'">Agregar Plan de estudio</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Carrera'">Agregar Carrera</button>
+	<button class="Side_bar_button" onclick="location.href = '/Agregar_Materia'">Agregar Materia</button>
+    <button class="Side_bar_button" onclick="location.href = '/Subir_Kardex'">Subir Kardex</button>
+</div>
+
+{% endblock %}
 
 {% block content  %}
 

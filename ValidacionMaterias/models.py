@@ -52,10 +52,8 @@ class PlanEstudioCarreraMateria(models.Model):
 
 class RegistroEquivalenciaComparativa(models.Model):
     idRegistroEquivalenciaComparativa = models.AutoField(primary_key=True)
-
-    idMateriaDe= models.IntegerField(blank=False)
-    idMateriaA= models.IntegerField(blank=False)
-
+    idMateriaDe = models.IntegerField(blank=False)
+    idMateriaA = models.IntegerField(blank=False)
 
 class DetalleAcreditacion(models.Model):
     idDetalleAcreditacion = models.AutoField(primary_key=True)
