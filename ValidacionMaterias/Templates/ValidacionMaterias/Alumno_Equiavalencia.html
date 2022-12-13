@@ -3,6 +3,7 @@
 {% load static %} 
 {% block head %}
 <link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
+
 <style>
     .item{
     
@@ -22,7 +23,9 @@
 th, td{
     border: solid 1px #eee;
     padding: 5px;
+    white-space: nowrap; text-overflow:ellipsis; overflow: hidden; 
 }
+
 .centrar{
 
 margin: 30px;
@@ -57,7 +60,7 @@ justify-content: center;
             <!--Desplegable del plan estudio carrera donde proviene-->
             <select name="planCarreraDe"  required>
                 
-                    {%for cp in cpl%}
+                    {%for cp in cplDE%}
                 <option value="{{cp.idPlanEstudioCarrera}}">
                     {{cp.idCarrera}} - {{cp.idPlanEstudio}}
                     </option>
@@ -69,8 +72,7 @@ justify-content: center;
 
                 <!--Desplegable del plan estudio carrera a donde se dirige -->
             <select name="planCarreraA"  required>
-                
-                {%for cp in cpl%}
+                {%for cp in cplA%}
                 <option value="{{cp.idPlanEstudioCarrera}}">
                     {{cp.idCarrera}} - {{cp.idPlanEstudio}}
                     </option>
@@ -79,7 +81,7 @@ justify-content: center;
             
         </div>
         <div class="desplegable">
-          <input class="Side_bar_button" type="submit" style="background-color: rgb(56, 140, 209); color: white;" value="EQUIVALENCIA">
+          <input class="Side_bar_button" type="submit" style="background-color: rgb(56, 140, 209); color: white;" value="GENERAR REGISTRO">
         </div>
     </div>
     <div>
@@ -106,7 +108,7 @@ justify-content: center;
 </div>
 <div id="contenedor" class="centrar">
     <div class="item">
-<table class="table" id="tabla1"style="width:680px; height: 338px; border-collapse: collapse;">
+<table class="table" id="tabla1"style="width:740px; height: 338px; border-collapse: collapse;">
 
     <thead class="thead-dark">
       <tr>

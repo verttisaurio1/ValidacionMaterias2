@@ -28,8 +28,11 @@
   background: #ffff;
 }
 .aside {
+  position:sticky;
+
   background: #ffaa00;
   flex-basis: 200px;
+  
 }
 
 img {
