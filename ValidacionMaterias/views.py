@@ -154,7 +154,7 @@ def Subir_Kardex(request):
             print(context)
             #reemplazar este return por el de la siguiente vista
             #return redirect('alumno_Equivalencia/',context)
-            return redirect('aplication:alumno_Equivalencia',nombre = str(context['archivo']))
+            return redirect('aplication:alumno_Equivalencia',nombre=str(context['archivo']),n_alum=str(context['nombre']),ap_p_alum=str(context['ap_pat']),ap_m_alum=str(context['ap_mat']))
             #return render(request,"ValidacionMaterias/Alumno_Equivalencia.html",context)
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
@@ -455,7 +455,7 @@ def actualizar_Tabla(request,idplanDE,idplanA):
     return render(request,"ValidacionMaterias/Actualizar_tablas.html",{"Registro_Equivalencias": datos_Equivalencia,"idplanDE":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanDE),"idplanA":PlanEstudioCarrera.objects.get(idPlanEstudioCarrera=idplanA)})
 
 def update_Equivalencia(request,id,idplanDE,idplanA,ban):
-
+    
     materias = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=idplanA)
     # bandera donde identifica que la materia seleccionada no esta repetida
     if ban == 0:
@@ -515,14 +515,19 @@ class materias_no_plan:
         self.periodo = periodo
  
 
-def alumno_Equivalencia(request,nombre):
-    
-    carrera_planListadas = PlanEstudioCarrera.objects.all()
-
-
+def alumno_Equivalencia(request,nombre,n_alum,ap_p_alum,ap_m_alum):
+    auxpc = PlanEstudioCarrera.objects.all()
+    carrera_planListadasA = []
+    carrera_planListadasDE = auxpc
+    for cp in auxpc:
+        
+        carreras = PlanEstudioCarreraMateria.objects.filter(idPlanEstudioCarrera=cp.idPlanEstudioCarrera)
+        for m in carreras:
+            if int(m.idMateria.ClaveMateria) == 0:
+                carrera_planListadasA.append(cp)
     if request.method =="POST":
-        #if 'pdf' in request.POST:
-            
+        if 'pdf' in request.POST: # boton generar pdf
+            print('*******pdf******')
         carrera_planListadas = PlanEstudioCarrera.objects.all()
         #Datos del desplegable plan estudio carrera "DE"
         idpcDE = request.POST['planCarreraDe']
@@ -578,7 +583,8 @@ def alumno_Equivalencia(request,nombre):
 
         if len(mnp) == 0:
             context= {
-                "cpl":carrera_planListadas,
+                "cplDE":carrera_planListadasDE,
+                "cplA":carrera_planListadasA,
                 "nombre":kardex['nombre'],
                 "ap_pat":kardex['ap_pat'],
                 "ap_mat":kardex['ap_mat'],
@@ -595,7 +601,8 @@ def alumno_Equivalencia(request,nombre):
 
         else:
             context= {
-                "cpl":carrera_planListadas,
+                "cplDE":carrera_planListadasDE,
+                "cplA":carrera_planListadasA,
                 "nombre":kardex['nombre'],
                 "ap_pat":kardex['ap_pat'],
                 "ap_mat":kardex['ap_mat'],
@@ -608,9 +615,22 @@ def alumno_Equivalencia(request,nombre):
                 "idpcDe":idpcDE,
                 "idpcA":idpcA 
             }
-        
+            plande= PlanEstudioCarrera.objects.get(idPlanEstudioCarrera =idpcDE) # filtra datos 
+            plana = PlanEstudioCarrera.objects.get(idPlanEstudioCarrera =idpcA) # filtra datos
+
+            nombre_pdf = n_alum # nombre del alumno ap_p_alum,ap_m_alum
+            ap_pat_pdf = ap_p_alum # apellido pat del alumno
+            ap_mat_pdf = ap_m_alum # apellido mat del alumno
+            matricula_pdf = matricula # matricula del alumno
+            tablas_equivalencia_pdf = alumno_equivalencia # materias del alumno y sus equivalencias
+            tablas_no_plan_pdf = mnp # materias que no se encuentran en el plan
+            nombre_carrera_de_pdf = plande.idCarrera.NombreCarrera # nombre de la carrera DE
+            nombre_carrera_a_pdf  = plana.idCarrera.NombreCarrera   # nombre de la carrera A
+            plan_estudio_de_pdf =   plande.idPlanEstudio.NombrePlanEstudio  # plan de estudio DE
+            plan_estudio_a_pdf =   plande.idPlanEstudio.NombrePlanEstudio   # plan de estudio A
+
         return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
-    context = {"cpl":carrera_planListadas}
+    context = {"cplDE":carrera_planListadasDE,"cplA":carrera_planListadasA,}
     return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
     
 
