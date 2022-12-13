@@ -4,7 +4,7 @@ from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
-from fpdf import FPDF 
+#from fpdf import FPDF 
 from datetime import date
 from datetime import datetime
 # Create your views here.
@@ -153,7 +153,8 @@ def Subir_Kardex(request):
             context['archivo'] = request.POST['archivo']
             print(context)
             #reemplazar este return por el de la siguiente vista
-            return render(request,"ValidacionMaterias/Subir_Kardex.html",context)
+            #return redirect('alumno_Equivalencia/',context)
+            return redirect('aplication:alumno_Equivalencia',nombre = str(context['archivo']))
             #return render(request,"ValidacionMaterias/Alumno_Equivalencia.html",context)
         elif 'document' in request.FILES:
             archivo = request.FILES['document']
@@ -292,7 +293,7 @@ def leer_kardex(archivo):
     kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
     return kardex
-
+""" 
 class ClassPDF(FPDF):
     
     
@@ -343,7 +344,7 @@ def pdf(request):
     pdf.footer()
     pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/ejemplo.pdf',dest='f')
     return render(request,"ValidacionMaterias/vista_pdf.html",context)
-
+ """
 
 
 
@@ -514,87 +515,102 @@ class materias_no_plan:
         self.periodo = periodo
  
 
-def alumno_Equivalencia(request):
+def alumno_Equivalencia(request,nombre):
     
-    idpcDE = 4
-    idpcA = 3
+    carrera_planListadas = PlanEstudioCarrera.objects.all()
 
-    kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/prueba.xls')
 
-      #Todos los registros de las tablas comparativas
-    registros = RegistroEquivalenciaComparativa.objects.all()
-
-    # lista donde se guardaran todos id que ya estan asociados 
-    datos_Equivalencia = []
-
-    #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
-    for r in registros:
-        materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
-        materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+    if request.method =="POST":
+        #if 'pdf' in request.POST:
             
-        #filtra los datos de los planes estudio carrera seleccionados a los registros
-        if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
-                # Se guardaran todos los ids que coinsidan
-                datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
+        carrera_planListadas = PlanEstudioCarrera.objects.all()
+        #Datos del desplegable plan estudio carrera "DE"
+        idpcDE = request.POST['planCarreraDe']
+        
+        #Datos del desplegable plan estudio carrera "A"
+        idpcA = request.POST['planCarreraA']
+        kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/'+ nombre)
+
+        #Todos los registros de las tablas comparativas
+        registros = RegistroEquivalenciaComparativa.objects.all()
+
+        # lista donde se guardaran todos id que ya estan asociados 
+        datos_Equivalencia = []
+
+        #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+        for r in registros:
+            materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+            materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
                 
+            #filtra los datos de los planes estudio carrera seleccionados a los registros
+            if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
+                    # Se guardaran todos los ids que coinsidan
+                    datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
+                    
 
-    materias = kardex['materias'].values()
-    alumno_equivalencia = []
-    claves = []
-    mnp = []
+        materias = kardex['materias'].values()
+        alumno_equivalencia = []
+        claves = []
+        mnp = []
 
-    for m in materias:
-        for e in datos_Equivalencia:
-            if len(m) == 7:
-                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
-                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
-                    claves.append(int(m[0]))
-            elif len(m) == 8:
-                if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
-                    alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
-                    claves.append(int(m[0]))
-    for m in materias:
-        if int(m[0]) not in claves:
-            
-            if len(m) == 7:
-                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
-            elif len(m) == 8:
-                mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
+        for m in materias:
+            for e in datos_Equivalencia:
+                if len(m) == 7:
+                    if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                        alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
+                        claves.append(int(m[0]))
+                elif len(m) == 8:
+                    if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                        alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
+                        claves.append(int(m[0]))
+        for m in materias:
+            if int(m[0]) not in claves:
+                
+                if len(m) == 7:
+                    mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
+                elif len(m) == 8:
+                    mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
 
-    matricula = kardex['matricula']
+        matricula = kardex['matricula']
 
-    aux= matricula[2:] 
-    matricula= aux[0] +  aux[2:] 
+        aux= matricula[2:] 
+        matricula= aux[0] +  aux[2:] 
 
-    if len(mnp) == 0:
-        context= {
-            
-            "nombre":kardex['nombre'],
-            "ap_pat":kardex['ap_pat'],
-            "ap_mat":kardex['ap_mat'],
-            "carrera":kardex['carrera'],
-            "matricula":matricula,
-            "planDe":kardex['plan'],
-            "equivalencia":alumno_equivalencia
-        }
-
-
-    else:
-        context= {
-            "nombre":kardex['nombre'],
-            "ap_pat":kardex['ap_pat'],
-            "ap_mat":kardex['ap_mat'],
-            "carrera":kardex['carrera'],
-            "matricula":matricula,
-            "planDe":kardex['plan'],
-            "equivalencia":alumno_equivalencia,
-            "mnp":mnp
-        }
+        if len(mnp) == 0:
+            context= {
+                "cpl":carrera_planListadas,
+                "nombre":kardex['nombre'],
+                "ap_pat":kardex['ap_pat'],
+                "ap_mat":kardex['ap_mat'],
+                "carrera":kardex['carrera'],
+                "matricula":matricula,
+                "planDe":kardex['plan'],
+                "equivalencia":alumno_equivalencia,
+                "ban":True,
+                "idpcDe":idpcDE,
+                "idpcA":idpcA 
     
+            }
 
-    
 
+        else:
+            context= {
+                "cpl":carrera_planListadas,
+                "nombre":kardex['nombre'],
+                "ap_pat":kardex['ap_pat'],
+                "ap_mat":kardex['ap_mat'],
+                "carrera":kardex['carrera'],
+                "matricula":matricula,
+                "planDe":kardex['plan'],
+                "equivalencia":alumno_equivalencia, # lista de todas las materias equivalentes
+                "mnp":mnp,  # lista de materias que no estan en el plan 
+                "ban":True,
+                "idpcDe":idpcDE,
+                "idpcA":idpcA 
+            }
+        
+        return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
+    context = {"cpl":carrera_planListadas}
     return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
     
 
-    

@@ -1,8 +1,8 @@
 
 {% extends  "ValidacionMaterias/base.html"  %}
-
+{% load static %} 
 {% block head %}
-
+<link href="{% static 'ValidacionMaterias/css/sidebar_buttons.css' %}" rel="stylesheet" />
 <style>
     .item{
     
@@ -11,6 +11,14 @@
     margin: 4px;
     display: inline-block;
 }
+.desplegable{
+    
+    height: 200px;
+    margin: 1%;
+    /* margin-bottom: 200px; */
+    display: inline-block;
+}
+
 th, td{
     border: solid 1px #eee;
     padding: 5px;
@@ -22,7 +30,15 @@ display: flex;
 justify-content: center;
 
 }
+#cdes{
 
+height: 10vh;
+margin: 20px;
+
+display: flex;
+justify-content: center;
+
+}
 </style>
 
 {% endblock %}
@@ -30,13 +46,16 @@ justify-content: center;
 
 
 {% block content  %}
-
+<div>
+  <h1 class="centrar">'GENERAR PDF' DE EQUIVALENCIAS ALUMNO</h1>
+</div>
+<form  method="POST">{% csrf_token %}
 <div id="cdes">
         <div class="desplegable">
 
 
             <!--Desplegable del plan estudio carrera donde proviene-->
-            <select name="planCarreraDe" form="post_equivalencia" required>
+            <select name="planCarreraDe"  required>
                 
                     {%for cp in cpl%}
                 <option value="{{cp.idPlanEstudioCarrera}}">
@@ -49,7 +68,7 @@ justify-content: center;
         <div class="desplegable">
 
                 <!--Desplegable del plan estudio carrera a donde se dirige -->
-            <select name="planCarreraA" form="post_equivalencia" required>
+            <select name="planCarreraA"  required>
                 
                 {%for cp in cpl%}
                 <option value="{{cp.idPlanEstudioCarrera}}">
@@ -57,10 +76,26 @@ justify-content: center;
                     </option>
                 {%endfor%}
             </select>
+            
+        </div>
+        <div class="desplegable">
+          <input class="Side_bar_button" type="submit" style="background-color: rgb(56, 140, 209); color: white;" value="EQUIVALENCIA">
         </div>
     </div>
     <div>
 </div>
+{%if ban%}
+<div class="centrar">
+  <input class="Side_bar_button" name="pdf" type="submit" style="background-color: rgb(215, 58, 89); color: white;" value="GENERAR PDF">
+</div>
+<input class="textbox"  name="pde"  value="{{idpcDe}}" style="display: none;" />
+<input class="textbox"  name="pa"  value="{{idpcA}}" style="display: none;" />
+{%else%}
+<div class="centrar">
+<input class="Side_bar_button" name="pdf" type="submit" style="background-color: rgb(215, 58, 89); color: white;" value="GENERAR PDF" disabled>
+</div>
+{%endif%}
+</form>
 <div>
     <p class="centrar">NOMBRE: {{nombre}} {{ap_pat}} {{ap_mat}}</p>
     <P class="centrar">CARRERA: {{carrera}}</P>
@@ -160,4 +195,5 @@ justify-content: center;
         </table>
     </div>
 </div>
+
     {%  endblock   %}
