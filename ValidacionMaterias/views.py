@@ -4,9 +4,10 @@ from django.shortcuts import render , HttpResponse ,redirect
 from ValidacionMaterias.models import Materia,PlanEstudio,Etapa,TipoMateria,Carrera,PlanEstudioCarrera,PlanEstudioCarreraMateria,RegistroEquivalenciaComparativa
 import pandas as pd
 import xlrd
-#from fpdf import FPDF 
+from fpdf import FPDF 
 from datetime import date
 from datetime import datetime
+from django.http import FileResponse 
 # Create your views here.
 
 def current_date_format(date):
@@ -293,62 +294,6 @@ def leer_kardex(archivo):
     kardex['materias'] = materias
     #finalmente regresamos el diccionario con un return kardex
     return kardex
-""" 
-class ClassPDF(FPDF):
-    
-    
-
-    def header(self):
-        
-        self.set_xy(50,0.0)
-        self.set_font('Arial','',16)
-        self.cell(w=100,h=50,align= 'C',txt='Universidad Autonoma de Baja California \n  ',border=0)
-        self.set_xy(48,10)
-        self.cell(w=100,h=50,align= 'C',txt='Facultad de Ingenieria Arquitectura y Diseño ',border=0)
-        self.set_font('Arial','',12)
-        self.set_xy(10,35)
-        self.cell(w=100,h=50,align= 'L',txt='A quien corresponda ',border=0)
-
-        self.set_xy(0,45)
-        self.cell(w=210,h=50,align= 'J',txt=' Por medio de la presente solicito de la manera más atenta se haga la acreditación de las asignaturas que se ',border=0)
-        self.set_xy(0,50)
-        self.cell(w=210,h=50,align= 'J',txt=' menciona en el cuadro del alumno VALENCIA MADRIGAL RENE ANTONIO con matrícula  del plan de estudios 2009-2  ',border=0)
-        self.set_xy(0,55)
-        self.cell(w=210,h=50,align= 'J',txt=' de Ingeniero en Electrónica',border=0)
-    def fecha(self):
-        now = datetime.now()
-        today= current_date_format(now)
-        self.set_xy(100,25)
-        self.set_font('Arial','',12)
-        self.cell(w=100,h=50,align= 'R',txt='Ensenada,Baja California a '+today,border=0)
-        
-
-    def body(self):
-        self.set_xy(100,0)
-        self.cell(w=210,h=210,align= 'R',txt='AAAAAA ',border=0)
-
-
-
-    def footer(self):
-        self.set_xy(10,50)
-        self.cell(w=100,h=210,align= 'L',txt='Sin más por el momento quedo a sus apreciables órdenes para cualquier aclaración ',border=0) 
-        
-def pdf(request):
-    context={}
-    
-    pdf = ClassPDF()
-    pdf.add_page()
-    pdf.header()
-    pdf.fecha()
-    pdf.body()
-    pdf.footer()
-    pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/ejemplo.pdf',dest='f')
-    return render(request,"ValidacionMaterias/vista_pdf.html",context)
- """
-
-
-
-
 
 
 
@@ -528,108 +473,219 @@ def alumno_Equivalencia(request,nombre,n_alum,ap_p_alum,ap_m_alum):
     if request.method =="POST":
         if 'pdf' in request.POST: # boton generar pdf
             print('*******pdf******')
-        carrera_planListadas = PlanEstudioCarrera.objects.all()
-        #Datos del desplegable plan estudio carrera "DE"
-        idpcDE = request.POST['planCarreraDe']
+            doc_pdf = open('ValidacionMaterias/static/ValidacionMaterias/pdfs/' + request.POST["archivo_pdf"], 'rb')
+
+            return FileResponse(doc_pdf)
+        else:
+            carrera_planListadas = PlanEstudioCarrera.objects.all()
+            #Datos del desplegable plan estudio carrera "DE"
+            idpcDE = request.POST['planCarreraDe']
         
-        #Datos del desplegable plan estudio carrera "A"
-        idpcA = request.POST['planCarreraA']
-        kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/'+ nombre)
+            #Datos del desplegable plan estudio carrera "A"
+            idpcA = request.POST['planCarreraA']
+            kardex=leer_kardex('ValidacionMaterias/static/ValidacionMaterias/Kardex/'+ nombre)
 
-        #Todos los registros de las tablas comparativas
-        registros = RegistroEquivalenciaComparativa.objects.all()
+            #Todos los registros de las tablas comparativas
+            registros = RegistroEquivalenciaComparativa.objects.all()
 
-        # lista donde se guardaran todos id que ya estan asociados 
-        datos_Equivalencia = []
+            # lista donde se guardaran todos id que ya estan asociados 
+            datos_Equivalencia = []
 
-        #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
-        for r in registros:
-            materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
-            materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
+            #Filtrar datos de los registros con respecto a los planes de estudio carrera seleccionados
+            for r in registros:
+                materiaDe = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaDe)
+                materiaA = PlanEstudioCarreraMateria.objects.get(idPlanEstudioCarreraMateria=r.idMateriaA)
                 
-            #filtra los datos de los planes estudio carrera seleccionados a los registros
-            if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
+                #filtra los datos de los planes estudio carrera seleccionados a los registros
+                if int(materiaDe.idPlanEstudioCarrera.idPlanEstudioCarrera) == int(idpcDE) and int(materiaA.idPlanEstudioCarrera.idPlanEstudioCarrera) ==  int(idpcA):
                     # Se guardaran todos los ids que coinsidan
                     datos_Equivalencia.append(Registro_Materias(r.idRegistroEquivalenciaComparativa,materiaDe,materiaA))
                     
 
-        materias = kardex['materias'].values()
-        alumno_equivalencia = []
-        claves = []
-        mnp = []
+            materias = kardex['materias'].values()
+            alumno_equivalencia = []
+            claves = []
+            mnp = []
 
-        for m in materias:
-            for e in datos_Equivalencia:
-                if len(m) == 7:
-                    if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
-                        alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
-                        claves.append(int(m[0]))
-                elif len(m) == 8:
-                    if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
-                        alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
-                        claves.append(int(m[0]))
-        for m in materias:
-            if int(m[0]) not in claves:
+            for m in materias:
+                for e in datos_Equivalencia:
+                    if len(m) == 7:
+                        if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                            alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[6]))
+                            claves.append(int(m[0]))
+                    elif len(m) == 8:
+                        if int(m[0]) == int(e.mde.idMateria.ClaveMateria): 
+                            alumno_equivalencia.append(datos_materias(e.mde,e.ma,m[3],m[4],m[7])) 
+                            claves.append(int(m[0]))
+            for m in materias:
+                if int(m[0]) not in claves:
                 
-                if len(m) == 7:
-                    mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
-                elif len(m) == 8:
-                    mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
+                    if len(m) == 7:
+                        mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[6]))
+                    elif len(m) == 8:
+                        mnp.append(materias_no_plan(m[0],m[1],m[2],m[3],m[4],m[7]))
 
-        matricula = kardex['matricula']
-
-        aux= matricula[2:] 
-        matricula= aux[0] +  aux[2:] 
-
-        if len(mnp) == 0:
-            context= {
-                "cplDE":carrera_planListadasDE,
-                "cplA":carrera_planListadasA,
-                "nombre":kardex['nombre'],
-                "ap_pat":kardex['ap_pat'],
-                "ap_mat":kardex['ap_mat'],
-                "carrera":kardex['carrera'],
-                "matricula":matricula,
-                "planDe":kardex['plan'],
-                "equivalencia":alumno_equivalencia,
-                "ban":True,
-                "idpcDe":idpcDE,
-                "idpcA":idpcA 
-    
-            }
-
-
-        else:
-            context= {
-                "cplDE":carrera_planListadasDE,
-                "cplA":carrera_planListadasA,
-                "nombre":kardex['nombre'],
-                "ap_pat":kardex['ap_pat'],
-                "ap_mat":kardex['ap_mat'],
-                "carrera":kardex['carrera'],
-                "matricula":matricula,
-                "planDe":kardex['plan'],
-                "equivalencia":alumno_equivalencia, # lista de todas las materias equivalentes
-                "mnp":mnp,  # lista de materias que no estan en el plan 
-                "ban":True,
-                "idpcDe":idpcDE,
-                "idpcA":idpcA 
-            }
+            matricula = kardex['matricula']
+            
+            aux= matricula[2:] 
+            matricula= aux[0] +  aux[2:] 
             plande= PlanEstudioCarrera.objects.get(idPlanEstudioCarrera =idpcDE) # filtra datos 
             plana = PlanEstudioCarrera.objects.get(idPlanEstudioCarrera =idpcA) # filtra datos
+            if len(mnp) == 0:
+                context= {
+                    "cplDE":carrera_planListadasDE,
+                    "cplA":carrera_planListadasA,
+                    "nombre":kardex['nombre'],
+                    "ap_pat":kardex['ap_pat'],
+                    "ap_mat":kardex['ap_mat'],
+                    "carrera":kardex['carrera'],
+                    "matricula":matricula,
+                    "planDe":kardex['plan'],
+                    "equivalencia":alumno_equivalencia,
+                    "ban":True,
+                    "idplanDE":plande,
+                    "idplanA":plana
+    
+                }
 
-            nombre_pdf = n_alum # nombre del alumno ap_p_alum,ap_m_alum
-            ap_pat_pdf = ap_p_alum # apellido pat del alumno
-            ap_mat_pdf = ap_m_alum # apellido mat del alumno
-            matricula_pdf = matricula # matricula del alumno
-            tablas_equivalencia_pdf = alumno_equivalencia # materias del alumno y sus equivalencias
-            tablas_no_plan_pdf = mnp # materias que no se encuentran en el plan
-            nombre_carrera_de_pdf = plande.idCarrera.NombreCarrera # nombre de la carrera DE
-            nombre_carrera_a_pdf  = plana.idCarrera.NombreCarrera   # nombre de la carrera A
-            plan_estudio_de_pdf =   plande.idPlanEstudio.NombrePlanEstudio  # plan de estudio DE
-            plan_estudio_a_pdf =   plande.idPlanEstudio.NombrePlanEstudio   # plan de estudio A
 
-        return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
+            else:
+                context= {
+                    "cplDE":carrera_planListadasDE,
+                    "cplA":carrera_planListadasA,
+                    "nombre":kardex['nombre'],
+                    "ap_pat":kardex['ap_pat'],
+                    "ap_mat":kardex['ap_mat'],
+                    "carrera":kardex['carrera'],
+                    "matricula":matricula,
+                    "planDe":kardex['plan'],
+                    "equivalencia":alumno_equivalencia, # lista de todas las materias equivalentes
+                    "mnp":mnp,  # lista de materias que no estan en el plan 
+                    "ban":True,
+                    "idplanDE":plande,
+                    "idplanA":plana
+                }
+
+                nombre_pdf = n_alum # nombre del alumno ap_p_alum,ap_m_alum
+                ap_pat_pdf = ap_p_alum # apellido pat del alumno
+                ap_mat_pdf = ap_m_alum # apellido mat del alumno
+                matricula_pdf = matricula # matricula del alumno
+                tablas_equivalencia_pdf = alumno_equivalencia # materias del alumno y sus equivalencias
+                tablas_no_plan_pdf = mnp # materias que no se encuentran en el plan
+                nombre_carrera_de_pdf = plande.idCarrera.NombreCarrera # nombre de la carrera DE
+                nombre_carrera_a_pdf  = plana.idCarrera.NombreCarrera   # nombre de la carrera A
+                plan_estudio_de_pdf =   plande.idPlanEstudio.NombrePlanEstudio  # plan de estudio DE
+                plan_estudio_a_pdf =   plande.idPlanEstudio.NombrePlanEstudio   # plan de estudio A
+
+                #preparo datos
+                nombre_comp = f"{nombre_pdf}  {ap_pat_pdf}  {ap_mat_pdf}"
+                lista_listas = []
+                for e in tablas_equivalencia_pdf:
+                    lista_datos = [str(e.mde.idMateria.ClaveMateria), str(e.mde.idMateria.NombreMateria), str(e.cali), str(e.examen), str(e.mde.idMateria.Creditos),str(e.periodo),    
+                    str(e.ma.idMateria.ClaveMateria), str(e.ma.idMateria.NombreMateria), str(e.cali), str(e.examen), str(e.ma.idMateria.Creditos), str(e.periodo)]   
+                    lista_listas.append(lista_datos)                                     
+                for m in tablas_no_plan_pdf:
+                    lista_datos = [str(m.clave), str(m.nombre), str(m.cali), str(m.examen), str(m.creditos), str(m.periodo), str(m.clave), 
+                                   str(m.nombre), str(m.cali), str(m.examen), str(m.creditos), str(m.periodo)]
+                    lista_listas.append(lista_datos)
+                TABLE_COL_NAMES = ("Clave","Materia","Calif","Exa","Cred","Periodo","Clave","Materia","Calif","Exa","Cred","Periodo")    
+                COLUMN_WIDTH =    (10,        40,      11,     10,   9,     15,       10,     40,       11,    10,   9,     15)   
+                    
+                #aqui se genera el pdf
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Times", size=8)
+                line_height = pdf.font_size * 3.5
+                col_width = pdf.epw / 12  # distribute content evenly
+                spacing=3
+                print(col_width)
+                print(pdf.epw)
+                
+                
+                #header
+                pdf.set_xy(50,0.0)
+                pdf.set_font('Arial','',16)
+                pdf.cell(w=100,h=50,align= 'C',txt='Universidad Autonoma de Baja California \n  ',border=0)
+                pdf.set_xy(48,10)
+                pdf.cell(w=100,h=50,align= 'C',txt='Facultad de Ingenieria Arquitectura y Diseño ',border=0)
+                pdf.set_font('Arial','',12)
+                pdf.set_xy(10,35)
+                pdf.cell(w=100,h=50,align= 'L',txt='A quien corresponda ',border=0)
+
+                pdf.set_xy(0,45)
+                pdf.cell(w=210,h=50,txt=' Por medio de la presente solicito de la manera más atenta se haga la acreditación de las asignaturas que se ',border=0)
+                pdf.set_xy(0,50)
+                pdf.cell(w=210,h=50,txt=f' menciona en el cuadro del alumno {nombre_comp} con matrícula {matricula_pdf} del plan de estudios',border=0)
+                pdf.set_xy(0,55)
+                pdf.cell(w=210,h=50,txt=f'{plan_estudio_de_pdf} de {nombre_carrera_de_pdf}',border=0)
+                #pdf.fecha()
+                now = datetime.now()
+                today= current_date_format(now)
+                pdf.set_xy(100,25)
+                pdf.set_font('Arial','',12)
+                pdf.cell(w=100,h=50,align= 'R',txt='Ensenada,Baja California a '+today,border=0)
+
+                
+                
+                
+                #body
+                pdf.set_font("Times", size=8)
+                pdf.set_y(90)
+                def render_table_header():
+                    pdf.set_font(style="B")  # enabling bold text
+                    contador = 0 
+                    for col_name in TABLE_COL_NAMES:
+                        pdf.cell(COLUMN_WIDTH[contador], line_height, col_name, border=1)
+                        contador+=1
+                    pdf.ln(line_height)
+                    pdf.set_font(style="")  # disabling bold text
+                render_table_header()
+                for row in lista_listas:
+                    if pdf.will_page_break(line_height):
+                        render_table_header()
+                    contador2=0
+                    for datum in row:
+                        pdf.multi_cell(COLUMN_WIDTH[contador2], line_height,align='C', txt=datum, border=1, ln=3, max_line_height=pdf.font_size)
+                        #pdf.cell(COLUMN_WIDTH[contador2], line_height, datum, border=1)
+                        contador2+=1
+                    pdf.ln(line_height)
+                    
+                    
+                #pdf.footer()
+                pdf.set_font('Arial','',12)
+                pdf.cell(w=100,h=25,align= 'L',txt='Sin más por el momento quedo a sus apreciables órdenes para cualquier aclaración ',border=0)
+                y = pdf.get_y()
+                print(y) 
+                pdf.set_line_width(0.2)
+                pdf.set_draw_color(r=0, g=0, b=0)
+                pdf.line(x1=30, y1=y+50, x2=90, y2=y+50)
+                pdf.line(x1=110, y1=y+50, x2=170, y2=y+50)
+                
+                pdf.set_xy(45,y+50)
+                pdf.cell(w=30,h=12,align= 'C',txt='Nombre de Acreditador',border=0)
+                pdf.ln(5)
+                pdf.set_x(45)
+                pdf.cell(w=30,h=12,align= 'C',txt='Cargo',border=0)
+                pdf.ln(5)
+                pdf.set_x(45)
+                pdf.cell(w=30,h=12,align= 'C',txt='Carrera',border=0)
+                
+                pdf.set_xy(125,y+50)
+                pdf.cell(w=30,h=12,align= 'C',txt='Nombre de Subdirector',border=0)
+                pdf.ln(5)
+                pdf.set_x(125)
+                pdf.cell(w=30,h=12,align= 'C',txt='Cargo',border=0)
+                pdf.ln(5)
+                pdf.set_x(125)
+                pdf.cell(w=30,h=12,align= 'C',txt='Carrera',border=0)
+                
+                
+                
+                archivo_pdf = matricula_pdf + "_pdf.pdf"
+                pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/' + archivo_pdf,dest='f')
+                context['archivo_pdf'] = archivo_pdf
+
+            return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
     context = {"cplDE":carrera_planListadasDE,"cplA":carrera_planListadasA,}
     return render(request,"ValidacionMaterias/Alumno_Equiavalencia.html",context)
     
