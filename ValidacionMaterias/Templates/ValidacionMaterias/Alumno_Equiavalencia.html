@@ -86,6 +86,7 @@ justify-content: center;
     </div>
     <div>
 </div>
+<input type="hidden" name="archivo_pdf" id="archivo_pdf" value="{{archivo_pdf}}">
 {%if ban%}
 <div class="centrar">
   <input class="Side_bar_button" name="pdf" type="submit" style="background-color: rgb(215, 58, 89); color: white;" value="GENERAR PDF">
@@ -112,7 +113,7 @@ justify-content: center;
 
     <thead class="thead-dark">
       <tr>
-        <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center"></td>
+        <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center">{{idplanDE.idCarrera}} - {{idplanDE.idPlanEstudio}}</td>
       </tr>
       <tr>
         <th scope="col">Clave</th>
@@ -157,7 +158,7 @@ justify-content: center;
 
             <thead class="thead-dark">
               <tr>
-                <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center"></td>
+                <td style=" background-color: rgb(40, 40, 40); color: white;" colspan="6" align="center">{{idplanA.idCarrera}} - {{idplanA.idPlanEstudio}}</td>
               </tr>
               <tr>
                 <th scope="col">Clave</th>
