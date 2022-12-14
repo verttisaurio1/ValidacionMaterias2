@@ -679,7 +679,9 @@ def alumno_Equivalencia(request,nombre,n_alum,ap_p_alum,ap_m_alum):
                 pdf.set_x(125)
                 pdf.cell(w=30,h=12,align= 'C',txt='Carrera',border=0)
                 
-                
+                pdf.set_font('Arial','',9)
+                pdf.set_xy(10,y+80)
+                pdf.cell(w=30,h=12,align= 'C',txt='c.c.p. Archivo',border=0)
                 
                 archivo_pdf = matricula_pdf + "_pdf.pdf"
                 pdf.output('ValidacionMaterias/static/ValidacionMaterias/pdfs/' + archivo_pdf,dest='f')
